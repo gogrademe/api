@@ -4,8 +4,8 @@ import "github.com/jinzhu/gorm"
 
 type Attempt struct {
 	gorm.Model
-	AssignmentID uint    `json:"assignmentId"`
-	PersonID     uint    `json:"personId"`
+	AssignmentID uint    `sql:"index"`
+	PersonID     uint    `sql:"index"`
 	Score        string  `json:"score"`
 	GradeAverage float32 `json:"gradeAverage"`
 }

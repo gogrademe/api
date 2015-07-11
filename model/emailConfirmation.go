@@ -8,6 +8,6 @@ import (
 
 type EmailConfirmation struct {
 	gorm.Model
-	UserID uint      `json:"userId"`
+	UserID uint      `sql:"index"`
 	UsedOn time.Time `json:"usedOn"`
 }

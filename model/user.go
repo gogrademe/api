@@ -10,9 +10,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-var (
-	ErrInvalidPassword = errors.New("password must be between 6 and 256 characters")
-)
+var ErrInvalidPassword = errors.New("password must be between 6 and 256 characters")
 
 type User struct {
 	gorm.Model
