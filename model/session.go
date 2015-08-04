@@ -3,25 +3,17 @@ package model
 import (
 	"time"
 
-	jwt "github.com/dgrijalva/jwt-go"
-	"github.com/jinzhu/gorm"
+	"github.com/dgrijalva/jwt-go"
 )
 
-type Session struct {
-	gorm.Model
-	Token     string    `json:"token"`
-	UserID    uint      `json:"userId"`
-	ExpiresAt time.Time `json:"expiresAt"`
-}
-
-// NewSession will create a jwt token for the user after we verified their password.
-func NewSession(u User) (Session, error) {
+// NewSession will create a jwt token for the user after we verified their password.s
+func NewSession(u Account) (Session, error) {
 	var s Session
 	token := jwt.New(jwt.GetSigningMethod("HS256"))
 
 	tokenExpires := time.Now().UTC().Add(time.Hour * 72)
-	token.Claims["userId"] = u.ID
-	token.Claims["personId"] = u.PersonID
+	token.Claims["userID"] = u.ID
+	token.Claims["personID"] = u.PersonID
 	token.Claims["email"] = u.Email
 	token.Claims["exp"] = tokenExpires.Unix()
 

@@ -1,0 +1,13 @@
+DROP TABLE announcement,
+assignment,
+assignment_attempt,
+assignment_group,
+course,
+email_confirmation,
+enrollment,
+person,
+contact_info,
+session,
+term,
+level,
+account;

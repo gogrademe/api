@@ -1,18 +1,18 @@
 package main
 
 import (
+	"net/http"
 	"net/url"
 
 	h "github.com/gogrademe/api/handler"
-	m "github.com/gogrademe/api/model"
+	"github.com/jmoiron/sqlx"
+	"github.com/serenize/snaker"
 
 	"github.com/MattAitchison/envconfig"
-	"github.com/Sirupsen/logrus"
-	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
 	mw "github.com/labstack/echo/middleware"
-
 	_ "github.com/lib/pq"
+	"github.com/rs/cors"
 )
 
 // const defaultDBName = "gogrademe-api-dev"
@@ -21,19 +21,24 @@ import (
 var listenAddr = envconfig.String("listen_addr", ":5000", "listen address")
 var dbAddr = envconfig.String("db_addr", "postgres://localhost/gogrademe-api-dev?sslmode=disable", "sql db address")
 
-func mustConnectDB(addr string) *gorm.DB {
+func connectDB(addr string) *sqlx.DB {
 	dburi, _ := url.Parse(addr)
-	db, err := gorm.Open(dburi.Scheme, dburi.String())
-	if err != nil {
-		logrus.Fatal(err)
-	}
-
-	if err := db.DB().Ping(); err != nil {
-		logrus.Fatal(err)
-	}
-
-	return &db
+	db := sqlx.MustConnect(dburi.Scheme, dburi.String())
+	db.MapperFunc(snaker.CamelToSnake)
+	return db
 }
+
+// func bootstrapUser(db *sqlx.DB) error {
+// 	as, err := store.GetAccountList(db)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	if len(as) != 0 {
+// 		return nil
+// 	}
+//
+// 	a := model.NewAccountFor(1,"test@test.com")
+// }
 
 func main() {
 
@@ -44,32 +49,37 @@ func main() {
 	e.Use(mw.Logger())
 	e.Use(mw.Recover())
 
-	db := mustConnectDB(dbAddr)
-	db.AutoMigrate(&m.User{}, &m.Person{}, &m.Assignment{}, &m.Session{}, &m.Announcement{})
+	e.Use(cors.New(cors.Options{
+		AllowedHeaders: []string{"*"},
+		Debug:          true,
+	}).Handler)
+
+	db := connectDB(dbAddr)
 
 	// Setup DB
 	e.Use(h.SetDB(db))
+	e.Use(h.JWTAuth("someRandomSigningKey"))
 
 	notmp := func(c *echo.Context) error {
-		d := h.ToDB(c)
+		// d := h.ToDB(c)
 
-		e := d.DB().Ping()
-		return c.JSON(500, e)
+		// e := d.DB().Ping()
+		return c.JSON(http.StatusNotImplemented, e)
 	}
 
 	e.Post("/session", notmp)
 
 	// auth := r.Group("", AuthRequired())
 
-	// Users
-	e.Get("/user", h.GetAllUsers)
-	e.Post("/user", h.CreateUser)
+	// Accounts
+	e.Get("/account", h.GetAllAccounts)
+	e.Post("/account", h.CreateAccount)
 
 	// People
 	g := e.Group("/person")
-	g.Get("", notmp)
-	g.Post("", notmp)
-	g.Get("/:id", notmp)
+	g.Get("", h.GetAllPeople)
+	g.Post("", h.CreatePerson)
+	g.Get("/:id", h.GetPerson)
 	g.Put("/:id", notmp)
 	g.Delete("/:id", notmp)
 
