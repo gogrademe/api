@@ -1,12 +1,10 @@
 package main
 
 import (
-	"net/http"
-	"net/url"
+	"fmt"
 
 	h "github.com/gogrademe/api/handler"
-	"github.com/jmoiron/sqlx"
-	"github.com/serenize/snaker"
+	"github.com/gogrademe/api/store"
 
 	"github.com/MattAitchison/envconfig"
 	"github.com/labstack/echo"
@@ -15,18 +13,8 @@ import (
 	"github.com/rs/cors"
 )
 
-// const defaultDBName = "gogrademe-api-dev"
-// const defaultDBDriver = "postgres"
-
 var listenAddr = envconfig.String("listen_addr", ":5000", "listen address")
 var dbAddr = envconfig.String("db_addr", "postgres://localhost/gogrademe-api-dev?sslmode=disable", "sql db address")
-
-func connectDB(addr string) *sqlx.DB {
-	dburi, _ := url.Parse(addr)
-	db := sqlx.MustConnect(dburi.Scheme, dburi.String())
-	db.MapperFunc(snaker.CamelToSnake)
-	return db
-}
 
 // func bootstrapUser(db *sqlx.DB) error {
 // 	as, err := store.GetAccountList(db)
@@ -44,6 +32,7 @@ func main() {
 
 	// Echo instance
 	e := echo.New()
+	e.SetDebug(true)
 
 	// Middleware
 	e.Use(mw.Logger())
@@ -51,91 +40,96 @@ func main() {
 
 	e.Use(cors.New(cors.Options{
 		AllowedHeaders: []string{"*"},
-		Debug:          true,
+		AllowedMethods: []string{"GET", "POST", "DELETE", "PUT"},
 	}).Handler)
 
-	db := connectDB(dbAddr)
-
 	// Setup DB
-	e.Use(h.SetDB(db))
-	e.Use(h.JWTAuth("someRandomSigningKey"))
+	e.Use(h.SetDB(store.Connect(dbAddr)))
 
-	notmp := func(c *echo.Context) error {
-		// d := h.ToDB(c)
+	e.Post("/session", h.CreateSession)
+	e.Post("/activate/:token", h.ActivateAccount)
+	e.Post("/setup", h.SetupApp)
 
-		// e := d.DB().Ping()
-		return c.JSON(http.StatusNotImplemented, e)
-	}
-
-	e.Post("/session", notmp)
-
-	// auth := r.Group("", AuthRequired())
+	auth := e.Group("")
+	auth.Use(h.JWTAuth("someRandomSigningKey"))
 
 	// Accounts
-	e.Get("/account", h.GetAllAccounts)
-	e.Post("/account", h.CreateAccount)
+	auth.Get("/account", h.GetAllAccounts)
+	auth.Post("/account", h.CreateAccount)
+	auth.Delete("/account/:id", h.DeleteAccount)
 
 	// People
-	g := e.Group("/person")
+	g := auth.Group("/person")
 	g.Get("", h.GetAllPeople)
 	g.Post("", h.CreatePerson)
 	g.Get("/:id", h.GetPerson)
-	g.Put("/:id", notmp)
-	g.Delete("/:id", notmp)
+	g.Put("/:id", h.UpdatePerson)
+	g.Delete("/:id", h.DeletePerson)
 
 	// Courses
-	g = e.Group("/course")
-	g.Get("", notmp)
-	g.Post("", notmp)
-	g.Get("/:id", notmp)
-	g.Put("/:id", notmp)
-	g.Delete("/:id", notmp)
+	g = auth.Group("/course")
+	g.Get("", h.GetAllCourses)
+	g.Post("", h.CreateCourse)
+	g.Get("/:id", h.GetCourse)
+	g.Put("/:id", h.UpdateCourse)
+	g.Delete("/:id", h.DeleteCourse)
+
+	// Announcement
+	g = auth.Group("/announcement")
+	g.Get("", h.GetAllAnnouncements)
+	g.Post("", h.CreateAnnouncement)
+	g.Get("/:id", h.GetAnnouncement)
+	g.Put("/:id", h.UpdateAnnouncement)
+	g.Delete("/:id", h.DeleteAnnouncement)
 
 	// Enrollments
-	g = e.Group("/enrollment")
-	g.Get("", notmp)
-	g.Post("", notmp)
-	g.Get("/:id", notmp)
-	g.Put("/:id", notmp)
-	g.Delete("/:id", notmp)
+	g = auth.Group("/enrollment")
+	g.Get("", h.GetAllEnrollments)
+	g.Post("", h.CreateEnrollment)
+	g.Get("/:id", h.GetEnrollment)
+	g.Put("/:id", h.UpdateEnrollment)
+	g.Delete("/:id", h.DeleteEnrollment)
 
 	// Terms
-	g = e.Group("/term")
-	g.Get("", notmp)
-	g.Post("", notmp)
-	g.Get("/:id", notmp)
-	g.Put("/:id", notmp)
+	g = auth.Group("/term")
+	g.Get("", h.GetAllTerms)
+	g.Post("", h.CreateTerm)
+	g.Get("/:id", h.GetTerm)
+	g.Put("/:id", h.UpdateTerm)
+	g.Delete("/:id", h.DeleteTerm)
 
-	// SchoolYears
-	g = e.Group("/schoolYear")
-	g.Get("", notmp)
-	g.Post("", notmp)
-	g.Get("/:id", notmp)
-	g.Put("/:id", notmp)
+	// Levels
+	g = auth.Group("/level")
+	g.Get("", h.GetAllLevels)
+	g.Post("", h.CreateLevel)
+	g.Get("/:id", h.GetLevel)
+	g.Put("/:id", h.UpdateLevel)
+	g.Delete("/:id", h.DeleteLevel)
 
 	// Assignments
-	g = e.Group("/assignment")
-	g.Get("", notmp)
-	g.Post("", notmp)
-	g.Get("/:id", notmp)
-	g.Put("/:id", notmp)
-	g.Delete("/:id", notmp)
+	g = auth.Group("/assignment")
+	g.Get("", h.GetAllAssignments)
+	g.Post("", h.CreateAssignment)
+	g.Get("/:id", h.GetAssignment)
+	g.Put("/:id", h.UpdateAssignment)
+	g.Delete("/:id", h.DeleteAssignment)
 
 	// AssignmentGroups
-	g = e.Group("/assignmentGroup")
-	g.Get("", notmp)
-	g.Post("", notmp)
-	g.Get("/:id", notmp)
-	g.Put("/:id", notmp)
-	g.Delete("/:id", notmp)
+	g = auth.Group("/assignmentGroup")
+	g.Get("", h.GetAllAssignmentGroups)
+	g.Post("", h.CreateAssignmentGroup)
+	g.Get("/:id", h.GetAssignmentGroup)
+	g.Put("/:id", h.UpdateAssignmentGroup)
+	g.Delete("/:id", h.DeleteAssignmentGroup)
 
 	// AssignmentGrades
-	g = e.Group("/grade")
-	g.Get("", notmp)
-	g.Post("", notmp)
+	g = auth.Group("/grade")
+	// g.Get("", notmp)
+	// g.Post("", notmp)
 	// g.Get("/:id", , notmp)
 	// g.Put("/:id", , notmp)
 
 	// Start server
+	fmt.Println("Listening On:", listenAddr)
 	e.Run(listenAddr)
 }

@@ -60,6 +60,7 @@ type AssignmentGroup struct {
 type Course struct {
 	AutoIncr
 	Name        string   `json:"name"`
+	LevelID     int      `json:"levelID"`
 	GradeLevel  string   `json:"gradeLevel"`
 	MaxStudents int      `json:"maxStudents"`
 	Terms       []string `json:"terms"`
@@ -103,19 +104,21 @@ type ContactInfo struct {
 type Session struct {
 	AutoIncr
 	Token     string    `json:"token"`
-	UserID    int       `json:"userID"`
+	AccountID int       `json:"accountID"`
 	ExpiresAt time.Time `json:"expiresAt"`
 }
 
 // Term --
 type Term struct {
 	AutoIncr
-	Name       string    `json:"name"`
-	SchoolYear time.Time `json:"schoolYear"`
+	Name       string `json:"name"`
+	SchoolYear int    `json:"schoolYear"`
 }
 
-// Type --
-type Type struct{}
+type Level struct {
+	AutoIncr
+	Name string `json:"name"`
+}
 
 // Account --
 type Account struct {

@@ -8,24 +8,24 @@ import (
 	"github.com/labstack/echo"
 )
 
-func CreatePerson(c *echo.Context) error {
-	p := &model.Person{}
+func CreateCourse(c *echo.Context) error {
+	p := &model.Course{}
 	if err := c.Bind(p); err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
 	db := ToDB(c)
-	if err := db.InsertPerson(p); err != nil {
+	if err := db.InsertCourse(p); err != nil {
 		return c.JSON(http.StatusInternalServerError, err)
 	}
 
 	return c.JSON(http.StatusCreated, p)
 }
 
-func GetAllPeople(c *echo.Context) error {
+func GetAllCourses(c *echo.Context) error {
 	db := ToDB(c)
 
-	ppl, err := db.GetPersonList()
+	ppl, err := db.GetCourseList()
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err)
 	}
@@ -34,10 +34,10 @@ func GetAllPeople(c *echo.Context) error {
 
 }
 
-func GetPerson(c *echo.Context) error {
+func GetCourse(c *echo.Context) error {
 	db := ToDB(c)
 	id, _ := strconv.Atoi(c.Param("id"))
-	ppl, err := db.GetPerson(id)
+	ppl, err := db.GetCourse(id)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err)
 	}
@@ -46,25 +46,25 @@ func GetPerson(c *echo.Context) error {
 
 }
 
-func DeletePerson(c *echo.Context) error {
+func DeleteCourse(c *echo.Context) error {
 	db := ToDB(c)
 	id, _ := strconv.Atoi(c.Param("id"))
 
-	if err := db.DeletePerson(id); err != nil {
+	if err := db.DeleteCourse(id); err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 
 	return c.JSON(http.StatusOK, nil)
 }
 
-func UpdatePerson(c *echo.Context) error {
-	p := &model.Person{}
+func UpdateCourse(c *echo.Context) error {
+	p := &model.Course{}
 	if err := c.Bind(p); err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
 	db := ToDB(c)
-	if err := db.UpdatePerson(p); err != nil {
+	if err := db.UpdateCourse(p); err != nil {
 		return c.JSON(http.StatusInternalServerError, err)
 	}
 

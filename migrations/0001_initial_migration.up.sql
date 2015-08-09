@@ -110,7 +110,7 @@ CREATE TABLE term (
   updated_at timestamp NOT NULL,
   archived_at timestamp NULL,
   name text NOT NULL,
-  school_year timestamp NOT NULL
+  school_year int NOT NULL
 );
 
 CREATE TABLE level (

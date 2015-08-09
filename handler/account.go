@@ -1,32 +1,37 @@
 package handler
 
 import (
-	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gogrademe/api/model"
-	"github.com/gogrademe/api/store"
 	"github.com/labstack/echo"
+)
+
+var (
+	ErrPasswordSimple         = NewAPIError(http.StatusBadRequest, "password too simple")
+	ErrInvalidActivationToken = NewAPIError(http.StatusBadRequest, "activation token does not match any accounts")
+	ErrSaving                 = NewAPIError(http.StatusInternalServerError, "error saving record")
+	ErrNotAuthorized          = NewAPIError(http.StatusUnauthorized, "access denied")
 )
 
 // GetAllAccounts http endpoint to return all accounts.
 func GetAllAccounts(c *echo.Context) error {
 	db := ToDB(c)
 
-	r, err := store.GetAccountList(db)
+	r, err := db.GetAccountList()
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err)
 	}
 
-	return c.JSON(200, &M{"account": r})
+	return c.JSON(200, r)
 
 }
 
 func CreateAccount(c *echo.Context) error {
 	a := &model.Account{}
 	if err := c.Bind(a); err != nil {
-		log.Println(err)
-		return c.JSON(http.StatusInternalServerError, err.Error())
+		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
 	na, err := model.NewAccountFor(a.PersonID, a.Email)
@@ -35,37 +40,44 @@ func CreateAccount(c *echo.Context) error {
 	}
 
 	db := ToDB(c)
-	if err := store.InsertAccount(db, na); err != nil {
+	if err := db.InsertAccount(na); err != nil {
+		return ErrSaving.Log(err)
+	}
+
+	return c.JSON(http.StatusCreated, na)
+}
+
+func DeleteAccount(c *echo.Context) error {
+	db := ToDB(c)
+	id, _ := strconv.Atoi(c.Param("id"))
+
+	if err := db.DeleteAccount(id); err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 
-	return c.JSON(http.StatusCreated, &M{"account": na})
+	return c.JSON(http.StatusOK, nil)
 }
-
-// func CreateAccount(c *echo.Context) error {
-// 	u := &m.Account{}
-// 	if err := c.Bind(u); err != nil {
-// 		return c.JSON(500, err)
-// 	}
-// 	log.Println(u)
-//
-// 	u, err := m.NewAccountFor(u.AccountID)
-// 	if err != nil {
-// 		c.Error(err)
-// 		return err
-// 	}
-// 	log.Println(u)
-//
-// 	db := ToDB(c)
-// 	if err := db.Create(u).Error; err != nil {
-// 		return c.JSON(503, err)
-// 	}
-//
-// 	// c.JSON(201, &APIRes{"user": []m.Account{*newAccount}})
-// 	return c.JSON(201, u)
-// }
 
 // ActivateAccount will activate a user account from a token or an admin.
 func ActivateAccount(c *echo.Context) error {
-	return c.JSON(http.StatusNotImplemented, "activate user not implemented")
+	db := ToDB(c)
+	token := c.Param("token")
+
+	password := c.Form("password")
+
+	usr, err := db.GetAccountByToken(token)
+	if err != nil {
+		return ErrInvalidActivationToken.Log(err)
+	}
+
+	usr.SetActive()
+	if err := usr.SetPassword(password); err != nil {
+		return ErrPasswordSimple.Log(err)
+	}
+
+	if err := db.UpdateAccount(usr); err != nil {
+		return ErrSaving.Log(err)
+	}
+
+	return c.JSON(http.StatusOK, usr)
 }

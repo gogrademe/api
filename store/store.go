@@ -1,19 +1,19 @@
 package store
 
 import (
+	"bytes"
 	"errors"
+	"fmt"
+	"net/url"
+	"strings"
 
 	"github.com/jmoiron/sqlx"
+	"github.com/serenize/snaker"
 )
 
-const insertAnnouncement = `:title, :person_id, :posted_date`
-const insertAssignment = `:name, :class_id, :term_id, :group_id, :max_score, :due_date`
-const insertCourse = `:name, :grade_level, :max_students`
-const insertEnrollment = `:person_id, :class_id, :term_id`
-const insertPerson = `:first_name, :middle_name, :last_name, :grade_level`
-const insertContactInfo = `:phone_number, :email`
-const insertSession = `:token, :user_id, :expires_at`
-const insertAccount = `:person_id, :email, :role, :hashed_password, :activation_token, :disabled`
+type Store struct {
+	db *sqlx.DB
+}
 
 func insert(db *sqlx.DB, stmt string, params interface{}) (int, error) {
 	rows, err := db.NamedQuery(stmt, params)
@@ -29,4 +29,71 @@ func insert(db *sqlx.DB, stmt string, params interface{}) (int, error) {
 	}
 
 	return 0, errors.New("No serial value returned for insert: " + stmt + ", error: " + rows.Err().Error())
+}
+
+// func (s *Store) UpdateAccount(account *model.Account) error {
+// 	stmt := `UPDATE account SET
+// 				person_id = :person_id,
+// 				email = :email,
+// 				role = :role,
+// 				hashed_password = :hashed_password,
+// 				activation_token = :activation_token,
+// 				disabled = :disabled,
+// 				created_at = :created_at,
+// 				updated_at = :updated_at
+// 			WHERE id = :id`
+// 	account.UpdateTime()
+//
+// 	_, err := s.db.NamedQuery(stmt, account)
+// 	return err
+// }
+type UpdateStmt struct {
+	table  string
+	values []value
+	where  string
+}
+
+type value struct {
+	col, opr, name string
+}
+
+func (v value) String() string {
+	return fmt.Sprint(v.col, v.opr, v.name)
+}
+
+func Update(table string) *UpdateStmt {
+	return &UpdateStmt{table: table}
+}
+
+func (stmt *UpdateStmt) SetN(name ...string) *UpdateStmt {
+	for k := range name {
+		stmt.values = append(stmt.values, value{col: name[k], opr: "=", name: ":" + name[k]})
+	}
+	return stmt
+}
+
+func (stmt *UpdateStmt) Eq(name string) *UpdateStmt {
+	stmt.where = fmt.Sprintf("%[1]s = :%[1]s", name)
+	return stmt
+}
+
+func (stmt *UpdateStmt) String() string {
+	buf := &bytes.Buffer{}
+	buf.WriteString(fmt.Sprintf("UPDATE %s SET ", stmt.table))
+
+	vals := make([]string, len(stmt.values))
+	for i := range stmt.values {
+		vals[i] = stmt.values[i].String()
+	}
+
+	buf.WriteString(strings.Join(vals, ", "))
+	buf.WriteString(fmt.Sprintf(" WHERE %s", stmt.where))
+
+	return buf.String()
+}
+func Connect(addr string) *Store {
+	dburi, _ := url.Parse(addr)
+	db := sqlx.MustConnect(dburi.Scheme, dburi.String())
+	db.MapperFunc(snaker.CamelToSnake)
+	return &Store{db: db}
 }

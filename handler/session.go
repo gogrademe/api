@@ -6,17 +6,21 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gogrademe/api/model"
-	"github.com/gogrademe/api/store"
 	"github.com/labstack/echo"
 )
 
 const bearer = "Bearer"
 
+var ErrInvalidCredentials = NewAPIError(http.StatusUnauthorized, "invalid email and/or password")
+
+// LoginForm only used for retrieving login credentials.
 type LoginForm struct {
 	Email    string
 	Password string
 }
 
+// CreateSession retrieves a user account, checks if active and compares hashed
+// password with provided password.
 func CreateSession(c *echo.Context) error {
 	p := &LoginForm{}
 	if err := c.Bind(p); err != nil {
@@ -24,9 +28,9 @@ func CreateSession(c *echo.Context) error {
 	}
 
 	db := ToDB(c)
-	account, err := store.GetAccountEmail(db, p.Email)
+	account, err := db.GetAccountEmail(p.Email)
 	if err != nil {
-		return c.JSON(http.StatusUnauthorized, err)
+		return ErrInvalidCredentials.Log(err)
 	}
 
 	if !account.IsActive() {
@@ -41,15 +45,15 @@ func CreateSession(c *echo.Context) error {
 		return c.JSON(http.StatusUnauthorized, err)
 	}
 
-	if err := store.InsertSession(db, &session); err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+	if err := db.InsertSession(&session); err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 
-	return c.JSON(http.StatusCreated, &M{"session": session})
+	return c.JSON(http.StatusCreated, session)
 
 }
 
-// A JSON Web Token middleware
+// JWTAuth is a JSON Web Token middleware
 func JWTAuth(key string) echo.HandlerFunc {
 	return func(c *echo.Context) error {
 
