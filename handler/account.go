@@ -31,7 +31,7 @@ func GetAllAccounts(c *echo.Context) error {
 func CreateAccount(c *echo.Context) error {
 	a := &model.Account{}
 	if err := c.Bind(a); err != nil {
-		return c.JSON(http.StatusBadRequest, err.Error())
+		return ErrBind.Log(err)
 	}
 
 	na, err := model.NewAccountFor(a.PersonID, a.Email)

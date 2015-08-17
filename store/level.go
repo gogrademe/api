@@ -16,8 +16,8 @@ func (s *Store) GetLevelList() ([]model.Level, error) {
 
 // InsertLevel --
 func (s *Store) InsertLevel(level *model.Level) error {
-	stmt := `INSERT INTO level (name,school_year, created_at, updated_at)
-			 VALUES (:name, :school_year, :created_at, :updated_at) RETURNING id`
+	stmt := `INSERT INTO level (name, created_at, updated_at)
+			 VALUES (:name, :created_at, :updated_at) RETURNING id`
 	level.UpdateTime()
 
 	var err error
@@ -27,7 +27,7 @@ func (s *Store) InsertLevel(level *model.Level) error {
 
 // Update --
 func (s *Store) UpdateLevel(level *model.Level) error {
-	stmt := Update("level").SetN("name", "school_year", "created_at", "updated_at").Eq("id").String()
+	stmt := Update("level").SetN("name", "created_at", "updated_at").Eq("id").String()
 	level.UpdateTime()
 
 	_, err := s.db.NamedQuery(stmt, level)

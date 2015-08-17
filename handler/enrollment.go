@@ -27,7 +27,8 @@ func GetAllEnrollments(c *echo.Context) error {
 
 	ppl, err := db.GetEnrollmentList()
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		
+		return ErrServerError.Log(err)
 	}
 
 	return c.JSON(200, ppl)

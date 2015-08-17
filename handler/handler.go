@@ -1,22 +1,29 @@
 package handler
 
 import (
+	"net/http"
+
 	"github.com/Sirupsen/logrus"
 	"github.com/labstack/echo"
 )
 
+var ErrBind = NewAPIError(http.StatusBadRequest, "error binding to model")
+var ErrForbidden = NewAPIError(http.StatusForbidden, "request forbidden")
+var ErrServerError = NewAPIError(http.StatusInternalServerError, "unexpected error occured")
+
 type APIError struct {
-	*echo.HTTPError
+	eh *echo.HTTPError
 }
 
 func NewAPIError(code int, msg ...string) *APIError {
-	return &APIError{echo.NewHTTPError(code, msg...)}
+	return &APIError{eh: echo.NewHTTPError(code, msg...)}
 }
 
 func (e *APIError) Log(err error, msg ...string) *echo.HTTPError {
 	logrus.WithFields(logrus.Fields{
-		"code":  e.Code(),
+		"code":  e.eh.Code(),
 		"error": err,
-	}).Warn(e.Error())
-	return e.HTTPError
+		"msgs":  msg,
+	}).Warn(e.eh.Error())
+	return e.eh
 }

@@ -11,7 +11,14 @@ func (s *Store) GetAssignment(id int) (*model.Assignment, error) {
 // GetAssignmentList --
 func (s *Store) GetAssignmentList() ([]model.Assignment, error) {
 	var r []model.Assignment
-	return r, s.db.Select(&r, "select * from assignment")
+	// q := `SELECT *, (SELECT row_to_json(dat__person.*) FROM (SELECT * FROM person WHERE person.id = enrollment.person_id) AS dat__person) AS person FROM enrollment`
+	return r, s.db.Select(&r, "SELECT a.*, row_to_json(g.*) as group FROM assignment a INNER JOIN assignment_group g ON g.id = a.group_id")
+}
+
+// GetAssignmentList --
+func (s *Store) GetCourseAssignmentList(courseID, termID int) ([]model.Assignment, error) {
+	var r []model.Assignment
+	return r, s.db.Select(&r, "SELECT a.*, row_to_json(g.*) as group FROM assignment a INNER JOIN assignment_group g ON g.id = a.group_id WHERE a.course_id = $1 AND a.term_id = $2", courseID, termID)
 }
 
 // InsertAssignment --

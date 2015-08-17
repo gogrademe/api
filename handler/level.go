@@ -11,7 +11,7 @@ import (
 func CreateLevel(c *echo.Context) error {
 	p := &model.Level{}
 	if err := c.Bind(p); err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return ErrBind.Log(err)
 	}
 
 	db := ToDB(c)

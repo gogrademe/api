@@ -43,6 +43,10 @@ func TestAccountActive(t *testing.T) {
 
 	for _, u := range users {
 		assert.Equal(t, u.active, u.in.IsActive())
+
+		// Set to active
+		u.in.SetActive()
+		assert.Equal(t, true, u.in.IsActive())
 	}
 
 }

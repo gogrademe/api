@@ -16,7 +16,7 @@ func CreateAssignmentGroup(c *echo.Context) error {
 
 	db := ToDB(c)
 	if err := db.InsertAssignmentGroup(p); err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return ErrSaving.Log(err)
 	}
 
 	return c.JSON(http.StatusCreated, p)

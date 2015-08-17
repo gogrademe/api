@@ -55,6 +55,12 @@ CREATE TABLE course (
   max_students integer
 );
 
+CREATE TABLE course_term (
+  course_id integer,
+  term_id integer,
+  PRIMARY KEY (course_id, term_id)
+);
+
 CREATE TABLE email_confirmation (
   id serial PRIMARY KEY,
   created_at timestamp NOT NULL,
@@ -69,9 +75,10 @@ CREATE TABLE enrollment (
   created_at timestamp NOT NULL,
   updated_at timestamp NOT NULL,
   archived_at timestamp NULL,
-  course_id integer NOT NULL UNIQUE,
-  person_id integer NOT NULL UNIQUE,
-  term_id integer NOT NULL UNIQUE
+  course_id integer NOT NULL,
+  person_id integer NOT NULL,
+  term_id integer NOT NULL,
+  UNIQUE (course_id, person_id, term_id)
 );
 
 CREATE TABLE person (
@@ -82,6 +89,7 @@ CREATE TABLE person (
   first_name text NOT NULL,
   middle_name text,
   last_name text NOT NULL,
+  role integer NOT NULL,
   grade_level text
 );
 
@@ -111,6 +119,7 @@ CREATE TABLE term (
   archived_at timestamp NULL,
   name text NOT NULL,
   school_year int NOT NULL
+  -- UNIQUE (lower(name), school_year)
 );
 
 CREATE TABLE level (
@@ -126,10 +135,9 @@ CREATE TABLE account (
   created_at timestamp NOT NULL,
   updated_at timestamp NOT NULL,
   archived_at timestamp NULL,
-  email text NOT NULL UNIQUE,
-  role text,
+  email text NOT NULL,
   hashed_password text NOT NULL,
   activation_token text,
   disabled boolean,
-  person_id integer NOT NULL
+  person_id integer NOT NULL UNIQUE
 );

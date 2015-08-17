@@ -1,13 +1,17 @@
 package model
 
-import "time"
+import (
+	"time"
+
+	"github.com/jmoiron/sqlx/types"
+)
 
 // AutoIncr contains fields that every db struct should have.
 type AutoIncr struct {
 	ID         int        `json:"id"`
-	CreatedAt  time.Time  `json:"createdAt"`
-	UpdatedAt  time.Time  `json:"updatedAt"`
-	ArchivedAt *time.Time `json:"archivedAt"`
+	CreatedAt  time.Time  `json:"createdAt" db:"created_at"`
+	UpdatedAt  time.Time  `json:"updatedAt" db:"updated_at"`
+	ArchivedAt *time.Time `json:"archivedAt" db:"archived_at"`
 }
 
 func (a *AutoIncr) UpdateTime() {
@@ -22,16 +26,16 @@ func (a *AutoIncr) UpdateTime() {
 type Announcement struct {
 	AutoIncr
 	Title      string    `json:"title"`
-	PersonID   int       `json:"personID"` // Change to PostedBy?
+	PersonID   int       `json:"personID" db:"person_id"` // Change to PostedBy?
 	Author     *Person   `json:"author"`
-	PostedDate time.Time `json:"postedDate"`
+	PostedDate time.Time `json:"postedDate" db:"posted_date"`
 }
 
 //Assignment ...
 type Assignment struct {
 	AutoIncr
 	Name     string           `json:"name"`
-	CourseID int              `json:"courseID"`
+	CourseID int              `json:"courseID" db:"course_id"`
 	TermID   int              `json:"termID"`
 	GroupID  int              `json:"groupID"`
 	Group    *AssignmentGroup `json:"group"`
@@ -59,38 +63,37 @@ type AssignmentGroup struct {
 // Course --
 type Course struct {
 	AutoIncr
-	Name        string   `json:"name"`
-	LevelID     int      `json:"levelID"`
-	GradeLevel  string   `json:"gradeLevel"`
-	MaxStudents int      `json:"maxStudents"`
-	Terms       []string `json:"terms"`
+	Name        string `json:"name"`
+	LevelID     int    `json:"levelID"`
+	GradeLevel  string `json:"gradeLevel"`
+	MaxStudents int    `json:"maxStudents"`
+	Terms       []Term `json:"terms"`
 }
 
-// EmailConfirmation --
-type EmailConfirmation struct {
+type CourseTerm struct {
 	AutoIncr
-	UserID int       `json:"userID"`
-	UsedOn time.Time `json:"usedOn"`
+	CourseID int
+	TermID   int
 }
 
 // Enrollment --
 type Enrollment struct {
 	AutoIncr
 
-	PersonID int     `json:"personID"`
-	Person   *Person `json:"person"`
-	CourseID int     `json:"courseID"`
-	TermID   int     `json:"termID"`
+	PersonID int             `json:"personID" db:"person_id"`
+	Person   *types.JsonText `json:"person"`
+	CourseID int             `json:"courseID" db:"course_id"`
+	TermID   int             `json:"termID" db:"term_id"`
 }
 
 // Person --
 type Person struct {
 	AutoIncr
-	FirstName  string `json:"firstName"`
-	MiddleName string `json:"middleName"`
-	LastName   string `json:"lastName"`
-	// Types       []string `json:"types,omitempty"`
-	GradeLevel  string         `json:"gradeLevel"`
+	FirstName   string         `json:"firstName" db:"first_name"`
+	MiddleName  string         `json:"middleName" db:"middle_name"`
+	LastName    string         `json:"lastName" db:"last_name"`
+	Role        Role           `json:"role"`
+	GradeLevel  string         `json:"gradeLevel" db:"grade_level"`
 	ContactInfo *[]ContactInfo `json:"contactInfo"`
 }
 

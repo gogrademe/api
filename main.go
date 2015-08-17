@@ -13,20 +13,12 @@ import (
 	"github.com/rs/cors"
 )
 
-var listenAddr = envconfig.String("listen_addr", ":5000", "listen address")
-var dbAddr = envconfig.String("db_addr", "postgres://localhost/gogrademe-api-dev?sslmode=disable", "sql db address")
-
-// func bootstrapUser(db *sqlx.DB) error {
-// 	as, err := store.GetAccountList(db)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	if len(as) != 0 {
-// 		return nil
-// 	}
-//
-// 	a := model.NewAccountFor(1,"test@test.com")
-// }
+var (
+	listenAddr    = envconfig.String("listen_addr", ":5000", "listen address")
+	dbAddr        = envconfig.String("db_addr", "postgres://localhost/gogrademe-api-dev?sslmode=disable", "sql db address")
+	signingkey    = envconfig.String("jwt_key", "examplesigningkey", "key to used to sign jwt")
+	signingmethod = envconfig.String("jwt_method", "HS256", "method used to sign jwt")
+)
 
 func main() {
 
@@ -46,12 +38,13 @@ func main() {
 	// Setup DB
 	e.Use(h.SetDB(store.Connect(dbAddr)))
 
-	e.Post("/session", h.CreateSession)
+	e.Post("/session", h.CreateSession(signingkey, signingmethod))
 	e.Post("/activate/:token", h.ActivateAccount)
+	e.Get("/setup", h.CanSetup)
 	e.Post("/setup", h.SetupApp)
 
 	auth := e.Group("")
-	auth.Use(h.JWTAuth("someRandomSigningKey"))
+	auth.Use(h.JWTAuth(signingkey, signingmethod))
 
 	// Accounts
 	auth.Get("/account", h.GetAllAccounts)
@@ -72,7 +65,9 @@ func main() {
 	g.Post("", h.CreateCourse)
 	g.Get("/:id", h.GetCourse)
 	g.Put("/:id", h.UpdateCourse)
+	g.Put("/:courseID/term/:termID", h.CreateCourseTerm)
 	g.Delete("/:id", h.DeleteCourse)
+	g.Get("/:courseID/term/:termID/assignments", h.GetCourseAssignments)
 
 	// Announcement
 	g = auth.Group("/announcement")

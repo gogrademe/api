@@ -22,6 +22,17 @@ func CreateCourse(c *echo.Context) error {
 	return c.JSON(http.StatusCreated, p)
 }
 
+func CreateCourseTerm(c *echo.Context) error {
+	courseID, _ := strconv.Atoi(c.Param("courseID"))
+	termID, _ := strconv.Atoi(c.Param("termID"))
+
+	db := ToDB(c)
+	if err := db.InsertCourseTerm(courseID, termID); err != nil {
+		return ErrSaving.Log(err)
+	}
+	return c.NoContent(http.StatusCreated)
+}
+
 func GetAllCourses(c *echo.Context) error {
 	db := ToDB(c)
 

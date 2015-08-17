@@ -17,7 +17,7 @@ func (s *Store) GetAssignmentGroupList() ([]model.AssignmentGroup, error) {
 // InsertAssignmentGroup --
 func (s *Store) InsertAssignmentGroup(assignmentGroup *model.AssignmentGroup) error {
 	stmt := `INSERT INTO assignment_group (name, weight, course_id, term_id, created_at, updated_at)
-			 VALUES (:name, :weight,:course_id, :term_id, :due_date, :created_at, :updated_at) RETURNING id`
+			 VALUES (:name, :weight,:course_id, :term_id, :created_at, :updated_at) RETURNING id`
 	assignmentGroup.UpdateTime()
 
 	var err error

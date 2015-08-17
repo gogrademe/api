@@ -11,12 +11,12 @@ import (
 func CreateAssignment(c *echo.Context) error {
 	p := &model.Assignment{}
 	if err := c.Bind(p); err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return ErrBind.Log(err)
 	}
 
 	db := ToDB(c)
 	if err := db.InsertAssignment(p); err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return ErrSaving.Log(err)
 	}
 
 	return c.JSON(http.StatusCreated, p)
@@ -27,7 +27,20 @@ func GetAllAssignments(c *echo.Context) error {
 
 	ppl, err := db.GetAssignmentList()
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return ErrServerError.Log(err)
+	}
+
+	return c.JSON(200, ppl)
+
+}
+
+func GetCourseAssignments(c *echo.Context) error {
+	db := ToDB(c)
+	course, _ := strconv.Atoi(c.Param("courseID"))
+	term, _ := strconv.Atoi(c.Param("termID"))
+	ppl, err := db.GetCourseAssignmentList(course, term)
+	if err != nil {
+		return ErrServerError.Log(err)
 	}
 
 	return c.JSON(200, ppl)

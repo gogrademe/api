@@ -8,11 +8,13 @@ import (
 	"strings"
 
 	"github.com/jmoiron/sqlx"
+	"github.com/mgutz/dat/sqlx-runner"
 	"github.com/serenize/snaker"
 )
 
 type Store struct {
 	db *sqlx.DB
+	ru *runner.DB
 }
 
 func insert(db *sqlx.DB, stmt string, params interface{}) (int, error) {
@@ -94,6 +96,9 @@ func (stmt *UpdateStmt) String() string {
 func Connect(addr string) *Store {
 	dburi, _ := url.Parse(addr)
 	db := sqlx.MustConnect(dburi.Scheme, dburi.String())
+	db.SetMaxIdleConns(4)
+	db.SetMaxOpenConns(16)
+
 	db.MapperFunc(snaker.CamelToSnake)
-	return &Store{db: db}
+	return &Store{db: db, ru: runner.NewDB(db.DB, "postgres")}
 }

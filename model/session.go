@@ -7,9 +7,9 @@ import (
 )
 
 // NewSession will create a jwt token for the user after we verified their password.s
-func NewSession(u Account) (Session, error) {
+func NewSession(key, method string, u Account) (Session, error) {
 	var s Session
-	token := jwt.New(jwt.GetSigningMethod("HS256"))
+	token := jwt.New(jwt.GetSigningMethod(method))
 
 	tokenExpires := time.Now().UTC().Add(time.Hour * 72)
 	token.Claims["userID"] = u.ID
@@ -18,7 +18,7 @@ func NewSession(u Account) (Session, error) {
 	token.Claims["exp"] = tokenExpires.Unix()
 
 	// TODO: Move this to a config file.
-	tokenString, err := token.SignedString([]byte("someRandomSigningKey"))
+	tokenString, err := token.SignedString([]byte(key))
 	if err != nil {
 		return s, err
 	}

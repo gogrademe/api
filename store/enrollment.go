@@ -11,7 +11,12 @@ func (s *Store) GetEnrollment(id int) (*model.Enrollment, error) {
 // GetEnrollmentList --
 func (s *Store) GetEnrollmentList() ([]model.Enrollment, error) {
 	var r []model.Enrollment
-	return r, s.db.Select(&r, "select * from enrollment")
+	// err := s.ru.SelectDoc("enrollment.*").
+	// 	One("person", `SELECT * from person WHERE person.id = enrollment.person_id`).
+	// 	From("enrollment").
+	// 	QueryStructs(&r)
+	q := `SELECT *, (SELECT row_to_json(dat__person.*) FROM (SELECT * FROM person WHERE person.id = enrollment.person_id) AS dat__person) AS person FROM enrollment`
+	return r, s.db.Select(&r, q)
 }
 
 // InsertEnrollment --

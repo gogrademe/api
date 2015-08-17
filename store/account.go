@@ -28,8 +28,8 @@ func (s *Store) GetAccountList() ([]model.Account, error) {
 
 // InsertAccount --
 func (s *Store) InsertAccount(account *model.Account) error {
-	stmt := `INSERT INTO account (person_id, email, role, hashed_password, activation_token, disabled, created_at, updated_at)
-			 VALUES (:person_id, :email, :role, :hashed_password, :activation_token, :disabled, :created_at, :updated_at) RETURNING id`
+	stmt := `INSERT INTO account (person_id, email, hashed_password, activation_token, disabled, created_at, updated_at)
+			 VALUES (:person_id, :email, :hashed_password, :activation_token, :disabled, :created_at, :updated_at) RETURNING id`
 	account.UpdateTime()
 
 	var err error
@@ -42,7 +42,6 @@ func (s *Store) UpdateAccount(account *model.Account) error {
 	stmt := Update("account").SetN(
 		"person_id",
 		"email",
-		"role",
 		"hashed_password",
 		"activation_token",
 		"disabled",

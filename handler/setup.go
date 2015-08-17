@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gogrademe/api/model"
@@ -13,18 +14,31 @@ type Setup struct {
 	Password string
 }
 
+// CanSetup returns StatusOK if able to proceed with setup
+func CanSetup(c *echo.Context) error {
+	db := ToDB(c)
+	accts, err := db.GetAccountList()
+	if len(accts) > 0 || err != nil {
+		return ErrForbidden.Log(err, fmt.Sprintf("total accounts: %s", len(accts)))
+	}
+
+	return c.NoContent(200)
+}
+
+// SetupApp allows the creation of a admin account if no accounts exist.
 func SetupApp(c *echo.Context) error {
 	db := ToDB(c)
 	accts, err := db.GetAccountList()
 	if len(accts) > 0 || err != nil {
-		return ErrNotAuthorized
+		return ErrForbidden.Log(err, fmt.Sprintf("total accounts: %s", len(accts)))
 	}
 
 	p := &Setup{}
 	if err := c.Bind(p); err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return ErrBind.Log(err)
 	}
 
+	p.Role = model.IsAdmin
 	if err := db.InsertPerson(&p.Person); err != nil {
 		return ErrSaving.Log(err)
 	}
@@ -40,5 +54,5 @@ func SetupApp(c *echo.Context) error {
 		return ErrSaving.Log(err)
 	}
 
-	return c.JSON(http.StatusCreated, "")
+	return c.NoContent(http.StatusCreated)
 }
