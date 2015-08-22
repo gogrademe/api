@@ -16,7 +16,7 @@ func CreatePerson(c *echo.Context) error {
 
 	db := ToDB(c)
 	if err := db.InsertPerson(p); err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return ErrServerError.Log(err)
 	}
 
 	return c.JSON(http.StatusCreated, p)
@@ -27,7 +27,7 @@ func GetAllPeople(c *echo.Context) error {
 
 	ppl, err := db.GetPersonList()
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return ErrServerError.Log(err)
 	}
 
 	return c.JSON(200, ppl)
@@ -39,7 +39,7 @@ func GetPerson(c *echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 	ppl, err := db.GetPerson(id)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return ErrServerError.Log(err)
 	}
 
 	return c.JSON(200, ppl)
@@ -65,7 +65,7 @@ func UpdatePerson(c *echo.Context) error {
 
 	db := ToDB(c)
 	if err := db.UpdatePerson(p); err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return ErrServerError.Log(err)
 	}
 
 	return c.JSON(http.StatusCreated, p)

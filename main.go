@@ -1,23 +1,22 @@
 package main
 
 import (
-	"fmt"
-
+	"github.com/Sirupsen/logrus"
 	h "github.com/gogrademe/api/handler"
 	"github.com/gogrademe/api/store"
 
-	"github.com/MattAitchison/envconfig"
 	"github.com/labstack/echo"
 	mw "github.com/labstack/echo/middleware"
 	_ "github.com/lib/pq"
+	"github.com/mattaitchison/env"
 	"github.com/rs/cors"
 )
 
 var (
-	listenAddr    = envconfig.String("listen_addr", ":5000", "listen address")
-	dbAddr        = envconfig.String("db_addr", "postgres://localhost/gogrademe-api-dev?sslmode=disable", "sql db address")
-	signingkey    = envconfig.String("jwt_key", "examplesigningkey", "key to used to sign jwt")
-	signingmethod = envconfig.String("jwt_method", "HS256", "method used to sign jwt")
+	listenAddr    = env.String("listen_addr", ":5000", "listen address")
+	dbAddr        = env.String("db_addr", "postgres://localhost/gogrademe-api-dev?sslmode=disable", "sql db address")
+	signingkey    = env.String("jwt_key", "examplesigningkey", "key to used to sign jwt")
+	signingmethod = env.String("jwt_method", "HS256", "method used to sign jwt")
 )
 
 func main() {
@@ -125,6 +124,6 @@ func main() {
 	// g.Put("/:id", , notmp)
 
 	// Start server
-	fmt.Println("Listening On:", listenAddr)
+	logrus.Println("Listening On:", listenAddr)
 	e.Run(listenAddr)
 }

@@ -9,9 +9,9 @@ import (
 // AutoIncr contains fields that every db struct should have.
 type AutoIncr struct {
 	ID         int        `json:"id"`
-	CreatedAt  time.Time  `json:"createdAt" db:"created_at"`
-	UpdatedAt  time.Time  `json:"updatedAt" db:"updated_at"`
-	ArchivedAt *time.Time `json:"archivedAt" db:"archived_at"`
+	CreatedAt  time.Time  `json:"created_at"`
+	UpdatedAt  time.Time  `json:"updated_at"`
+	ArchivedAt *time.Time `json:"archived_at"`
 }
 
 func (a *AutoIncr) UpdateTime() {
@@ -26,29 +26,29 @@ func (a *AutoIncr) UpdateTime() {
 type Announcement struct {
 	AutoIncr
 	Title      string    `json:"title"`
-	PersonID   int       `json:"personID" db:"person_id"` // Change to PostedBy?
+	PersonID   int       `json:"person_id"` // Change to PostedBy?
 	Author     *Person   `json:"author"`
-	PostedDate time.Time `json:"postedDate" db:"posted_date"`
+	PostedDate time.Time `json:"posted_date"`
 }
 
 //Assignment ...
 type Assignment struct {
 	AutoIncr
 	Name     string           `json:"name"`
-	CourseID int              `json:"courseID" db:"course_id"`
-	TermID   int              `json:"termID"`
-	GroupID  int              `json:"groupID"`
+	CourseID int              `json:"course_id"`
+	TermID   int              `json:"term_id"`
+	GroupID  int              `json:"group_id"`
 	Group    *AssignmentGroup `json:"group"`
-	MaxScore int16            `json:"maxScore"`
-	DueDate  *time.Time       `json:"dueDate"`
+	MaxScore int16            `json:"max_score"`
+	DueDate  *time.Time       `json:"due_date"`
 }
 
 type AssignmentAttempts struct {
 	AutoIncr
-	AssignmentID int     `json:"assignmentID"`
-	PersonID     int     `json:"personID"`
+	AssignmentID int     `json:"assignment_id"`
+	PersonID     int     `json:"person_id"`
 	Score        string  `json:"score"`
-	GradeAverage float32 `json:"gradeAverage"`
+	GradeAverage float32 `json:"grade_average"`
 }
 
 // AssignmentGroup ...
@@ -56,50 +56,50 @@ type AssignmentGroup struct {
 	AutoIncr
 	Name     string  `json:"name"`
 	Weight   float64 `json:"weight"`
-	CourseID int     `json:"courseID"`
-	TermID   int     `json:"termID"`
+	CourseID int     `json:"course_id"`
+	TermID   int     `json:"term_id"`
 }
 
 // Course --
 type Course struct {
 	AutoIncr
 	Name        string `json:"name"`
-	LevelID     int    `json:"levelID"`
-	GradeLevel  string `json:"gradeLevel"`
-	MaxStudents int    `json:"maxStudents"`
+	LevelID     int    `json:"level_id"`
+	GradeLevel  string `json:"grade_level"`
+	MaxStudents int    `json:"max_students"`
 	Terms       []Term `json:"terms"`
 }
 
 type CourseTerm struct {
 	AutoIncr
-	CourseID int
-	TermID   int
+	CourseID int `json:"course_id"`
+	TermID   int `json:"term_id"`
 }
 
 // Enrollment --
 type Enrollment struct {
 	AutoIncr
 
-	PersonID int             `json:"personID" db:"person_id"`
+	PersonID int             `json:"person_id"`
 	Person   *types.JsonText `json:"person"`
-	CourseID int             `json:"courseID" db:"course_id"`
-	TermID   int             `json:"termID" db:"term_id"`
+	CourseID int             `json:"course_id"`
+	TermID   int             `json:"term_id"`
 }
 
 // Person --
 type Person struct {
 	AutoIncr
-	FirstName   string         `json:"firstName" db:"first_name"`
-	MiddleName  string         `json:"middleName" db:"middle_name"`
-	LastName    string         `json:"lastName" db:"last_name"`
+	FirstName   string         `json:"first_name"`
+	MiddleName  string         `json:"middle_name"`
+	LastName    string         `json:"last_name"`
 	Role        Role           `json:"role"`
-	GradeLevel  string         `json:"gradeLevel" db:"grade_level"`
-	ContactInfo *[]ContactInfo `json:"contactInfo"`
+	GradeLevel  string         `json:"grade_level"`
+	ContactInfo *[]ContactInfo `json:"contact_info"`
 }
 
 // ContactInfo --
 type ContactInfo struct {
-	PhoneNumber string `json:"phoneNumber"`
+	PhoneNumber string `json:"phone_number"`
 	Email       string `json:"email"`
 }
 
@@ -107,15 +107,15 @@ type ContactInfo struct {
 type Session struct {
 	AutoIncr
 	Token     string    `json:"token"`
-	AccountID int       `json:"accountID"`
-	ExpiresAt time.Time `json:"expiresAt"`
+	AccountID int       `json:"account_id"`
+	ExpiresAt time.Time `json:"expires_at"`
 }
 
 // Term --
 type Term struct {
 	AutoIncr
 	Name       string `json:"name"`
-	SchoolYear int    `json:"schoolYear"`
+	SchoolYear int    `json:"school_year"`
 }
 
 type Level struct {
@@ -126,7 +126,7 @@ type Level struct {
 // Account --
 type Account struct {
 	AutoIncr
-	PersonID        int    `json:"personID"`
+	PersonID        int    `json:"person_id"`
 	Email           string `json:"email"`
 	Role            string `json:"role"`
 	HashedPassword  string `json:"-"`

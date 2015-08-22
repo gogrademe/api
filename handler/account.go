@@ -21,7 +21,7 @@ func GetAllAccounts(c *echo.Context) error {
 
 	r, err := db.GetAccountList()
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return ErrServerError.Log(err)
 	}
 
 	return c.JSON(200, r)
@@ -36,7 +36,7 @@ func CreateAccount(c *echo.Context) error {
 
 	na, err := model.NewAccountFor(a.PersonID, a.Email)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
+		return ErrServerError.Log(err)
 	}
 
 	db := ToDB(c)
@@ -52,7 +52,7 @@ func DeleteAccount(c *echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 
 	if err := db.DeleteAccount(id); err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
+		return ErrServerError.Log(err)
 	}
 
 	return c.JSON(http.StatusOK, nil)

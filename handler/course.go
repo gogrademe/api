@@ -16,7 +16,7 @@ func CreateCourse(c *echo.Context) error {
 
 	db := ToDB(c)
 	if err := db.InsertCourse(p); err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return ErrServerError.Log(err)
 	}
 
 	return c.JSON(http.StatusCreated, p)
@@ -38,7 +38,7 @@ func GetAllCourses(c *echo.Context) error {
 
 	ppl, err := db.GetCourseList()
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return ErrServerError.Log(err)
 	}
 
 	return c.JSON(200, ppl)
@@ -50,7 +50,7 @@ func GetCourse(c *echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 	ppl, err := db.GetCourse(id)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return ErrServerError.Log(err)
 	}
 
 	return c.JSON(200, ppl)
@@ -76,7 +76,7 @@ func UpdateCourse(c *echo.Context) error {
 
 	db := ToDB(c)
 	if err := db.UpdateCourse(p); err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return ErrServerError.Log(err)
 	}
 
 	return c.JSON(http.StatusCreated, p)

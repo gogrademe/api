@@ -16,7 +16,7 @@ func CreateEnrollment(c *echo.Context) error {
 
 	db := ToDB(c)
 	if err := db.InsertEnrollment(p); err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return ErrServerError.Log(err)
 	}
 
 	return c.JSON(http.StatusCreated, p)
@@ -27,7 +27,7 @@ func GetAllEnrollments(c *echo.Context) error {
 
 	ppl, err := db.GetEnrollmentList()
 	if err != nil {
-		
+
 		return ErrServerError.Log(err)
 	}
 
@@ -40,7 +40,7 @@ func GetEnrollment(c *echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 	ppl, err := db.GetEnrollment(id)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return ErrServerError.Log(err)
 	}
 
 	return c.JSON(200, ppl)
@@ -66,7 +66,7 @@ func UpdateEnrollment(c *echo.Context) error {
 
 	db := ToDB(c)
 	if err := db.UpdateEnrollment(p); err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return ErrServerError.Log(err)
 	}
 
 	return c.JSON(http.StatusCreated, p)

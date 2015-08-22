@@ -16,7 +16,7 @@ func CreateAnnouncement(c *echo.Context) error {
 
 	db := ToDB(c)
 	if err := db.InsertAnnouncement(p); err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return ErrServerError.Log(err)
 	}
 
 	return c.JSON(http.StatusCreated, p)
@@ -27,7 +27,7 @@ func GetAllAnnouncements(c *echo.Context) error {
 
 	ppl, err := db.GetAnnouncementList()
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return ErrServerError.Log(err)
 	}
 
 	return c.JSON(200, ppl)
@@ -39,7 +39,7 @@ func GetAnnouncement(c *echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 	ppl, err := db.GetAnnouncement(id)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return ErrServerError.Log(err)
 	}
 
 	return c.JSON(200, ppl)
@@ -65,7 +65,7 @@ func UpdateAnnouncement(c *echo.Context) error {
 
 	db := ToDB(c)
 	if err := db.UpdateAnnouncement(p); err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return ErrServerError.Log(err)
 	}
 
 	return c.JSON(http.StatusCreated, p)

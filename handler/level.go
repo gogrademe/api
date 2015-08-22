@@ -16,7 +16,7 @@ func CreateLevel(c *echo.Context) error {
 
 	db := ToDB(c)
 	if err := db.InsertLevel(p); err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return ErrServerError.Log(err)
 	}
 
 	return c.JSON(http.StatusCreated, p)
@@ -27,7 +27,7 @@ func GetAllLevels(c *echo.Context) error {
 
 	ppl, err := db.GetLevelList()
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return ErrServerError.Log(err)
 	}
 
 	return c.JSON(200, ppl)
@@ -39,7 +39,7 @@ func GetLevel(c *echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 	ppl, err := db.GetLevel(id)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return ErrServerError.Log(err)
 	}
 
 	return c.JSON(200, ppl)
@@ -65,7 +65,7 @@ func UpdateLevel(c *echo.Context) error {
 
 	db := ToDB(c)
 	if err := db.UpdateLevel(p); err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return ErrServerError.Log(err)
 	}
 
 	return c.JSON(http.StatusCreated, p)

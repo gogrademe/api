@@ -16,7 +16,7 @@ func CreateTerm(c *echo.Context) error {
 
 	db := ToDB(c)
 	if err := db.InsertTerm(p); err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return ErrServerError.Log(err)
 	}
 
 	return c.JSON(http.StatusCreated, p)
@@ -27,7 +27,7 @@ func GetAllTerms(c *echo.Context) error {
 
 	ppl, err := db.GetTermList()
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return ErrServerError.Log(err)
 	}
 
 	return c.JSON(200, ppl)
@@ -39,7 +39,7 @@ func GetTerm(c *echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 	ppl, err := db.GetTerm(id)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return ErrServerError.Log(err)
 	}
 
 	return c.JSON(200, ppl)
@@ -65,7 +65,7 @@ func UpdateTerm(c *echo.Context) error {
 
 	db := ToDB(c)
 	if err := db.UpdateTerm(p); err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return ErrServerError.Log(err)
 	}
 
 	return c.JSON(http.StatusCreated, p)

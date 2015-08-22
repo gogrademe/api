@@ -27,7 +27,7 @@ func GetAllAssignmentGroups(c *echo.Context) error {
 
 	ppl, err := db.GetAssignmentGroupList()
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return ErrServerError.Log(err)
 	}
 
 	return c.JSON(200, ppl)
@@ -39,7 +39,7 @@ func GetAssignmentGroup(c *echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 	ppl, err := db.GetAssignmentGroup(id)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return ErrServerError.Log(err)
 	}
 
 	return c.JSON(200, ppl)
@@ -65,7 +65,7 @@ func UpdateAssignmentGroup(c *echo.Context) error {
 
 	db := ToDB(c)
 	if err := db.UpdateAssignmentGroup(p); err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return ErrServerError.Log(err)
 	}
 
 	return c.JSON(http.StatusCreated, p)

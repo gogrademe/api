@@ -11,6 +11,10 @@ func (s *Store) GetCourse(id int) (*model.Course, error) {
 			INNER JOIN level ON (course.level_id = level.id)`).
 		Where("course.id = $1", id).QueryStruct(&r)
 
+	`SELECT course.*, level.name AS grade_level,
+		(SELECT * from term WHERE id IN
+			(SELECT id FROM course_term WHERE course_id=$1)) AS "terms" FROM course
+			INNER JOIN level ON (course.level_id = level.id) WHERE (course.id = $2)`
 	return &r, err
 }
 

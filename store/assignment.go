@@ -11,8 +11,7 @@ func (s *Store) GetAssignment(id int) (*model.Assignment, error) {
 // GetAssignmentList --
 func (s *Store) GetAssignmentList() ([]model.Assignment, error) {
 	var r []model.Assignment
-	// q := `SELECT *, (SELECT row_to_json(dat__person.*) FROM (SELECT * FROM person WHERE person.id = enrollment.person_id) AS dat__person) AS person FROM enrollment`
-	return r, s.db.Select(&r, "SELECT a.*, row_to_json(g.*) as group FROM assignment a INNER JOIN assignment_group g ON g.id = a.group_id")
+	return r, s.ru.SelectDoc("*").From(`assignment INNER JOIN assignment_group ON assignment_group.id = assignment.group_id`).QueryStructs(&r)
 }
 
 // GetAssignmentList --
