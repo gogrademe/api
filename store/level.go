@@ -5,7 +5,7 @@ import "github.com/gogrademe/api/model"
 // GetLevel --
 func (s *Store) GetLevel(id int) (*model.Level, error) {
 	var r model.Level
-	return &r, s.db.Get(&r, "select * from level WHERE id=$1", id)
+	return &r, s.db.Get(&r, "select * from level WHERE level_id=$1", id)
 }
 
 // GetLevelList --
@@ -17,17 +17,17 @@ func (s *Store) GetLevelList() ([]model.Level, error) {
 // InsertLevel --
 func (s *Store) InsertLevel(level *model.Level) error {
 	stmt := `INSERT INTO level (name, created_at, updated_at)
-			 VALUES (:name, :created_at, :updated_at) RETURNING id`
+			 VALUES (:name, :created_at, :updated_at) RETURNING level_id`
 	level.UpdateTime()
 
 	var err error
-	level.ID, err = insert(s.db, stmt, level)
+	level.LevelID, err = insert(s.db, stmt, level)
 	return err
 }
 
 // Update --
 func (s *Store) UpdateLevel(level *model.Level) error {
-	stmt := Update("level").SetN("name", "created_at", "updated_at").Eq("id").String()
+	stmt := Update("level").SetN("name", "created_at", "updated_at").Eq("level_id").String()
 	level.UpdateTime()
 
 	_, err := s.db.NamedQuery(stmt, level)
@@ -37,7 +37,7 @@ func (s *Store) UpdateLevel(level *model.Level) error {
 
 // Del --
 func (s *Store) DeleteLevel(id int) error {
-	stmt := `DELETE FROM level WHERE id=$1`
+	stmt := `DELETE FROM level WHERE level_id=$1`
 
 	_, err := s.db.Exec(stmt, id)
 	return err

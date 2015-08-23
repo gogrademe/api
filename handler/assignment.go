@@ -25,12 +25,12 @@ func CreateAssignment(c *echo.Context) error {
 func GetAllAssignments(c *echo.Context) error {
 	db := ToDB(c)
 
-	ppl, err := db.GetAssignmentList()
+	res, err := db.GetAssignmentList()
 	if err != nil {
 		return ErrServerError.Log(err)
 	}
 
-	return c.JSON(200, ppl)
+	return c.JSON(200, res)
 
 }
 
@@ -38,24 +38,24 @@ func GetCourseAssignments(c *echo.Context) error {
 	db := ToDB(c)
 	course, _ := strconv.Atoi(c.Param("courseID"))
 	term, _ := strconv.Atoi(c.Param("termID"))
-	ppl, err := db.GetCourseAssignmentList(course, term)
+	res, err := db.GetCourseAssignmentList(course, term)
 	if err != nil {
 		return ErrServerError.Log(err)
 	}
 
-	return c.JSON(200, ppl)
+	return c.JSON(200, res)
 
 }
 
 func GetAssignment(c *echo.Context) error {
 	db := ToDB(c)
 	id, _ := strconv.Atoi(c.Param("id"))
-	ppl, err := db.GetAssignment(id)
+	res, err := db.GetAssignment(id)
 	if err != nil {
 		return ErrServerError.Log(err)
 	}
 
-	return c.JSON(200, ppl)
+	return c.JSON(200, res)
 
 }
 

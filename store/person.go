@@ -5,7 +5,7 @@ import "github.com/gogrademe/api/model"
 // GetPerson --
 func (s *Store) GetPerson(id int) (*model.Person, error) {
 	var r model.Person
-	return &r, s.db.Get(&r, "select * from person WHERE id=$1", id)
+	return &r, s.db.Get(&r, "select * from person WHERE person_id=$1", id)
 }
 
 // GetPersonList --
@@ -17,17 +17,17 @@ func (s *Store) GetPersonList() ([]model.Person, error) {
 // InsertPerson --
 func (s *Store) InsertPerson(person *model.Person) error {
 	stmt := `INSERT INTO person (first_name, middle_name, last_name, grade_level, role, created_at, updated_at)
-			 VALUES (:first_name, :middle_name, :last_name, :grade_level, :role, :created_at, :updated_at) RETURNING id`
+			 VALUES (:first_name, :middle_name, :last_name, :grade_level, :role, :created_at, :updated_at) RETURNING person_id`
 	person.UpdateTime()
 
 	var err error
-	person.ID, err = insert(s.db, stmt, person)
+	person.PersonID, err = insert(s.db, stmt, person)
 	return err
 }
 
 // Update --
 func (s *Store) UpdatePerson(person *model.Person) error {
-	stmt := Update("person").SetN("first_name", "middle_name", "last_name", "grade_level", "role", "created_at", "updated_at").Eq("id").String()
+	stmt := Update("person").SetN("first_name", "middle_name", "last_name", "grade_level", "role", "created_at", "updated_at").Eq("person_id").String()
 	person.UpdateTime()
 
 	_, err := s.db.NamedQuery(stmt, person)
@@ -37,7 +37,7 @@ func (s *Store) UpdatePerson(person *model.Person) error {
 
 // Del --
 func (s *Store) DeletePerson(id int) error {
-	stmt := `DELETE FROM person WHERE id=$1`
+	stmt := `DELETE FROM person WHERE person_id=$1`
 
 	_, err := s.db.Exec(stmt, id)
 	return err

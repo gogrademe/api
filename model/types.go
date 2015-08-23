@@ -1,14 +1,10 @@
 package model
 
-import (
-	"time"
-
-	"github.com/jmoiron/sqlx/types"
-)
+import "time"
 
 // AutoIncr contains fields that every db struct should have.
 type AutoIncr struct {
-	ID         int        `json:"id"`
+	// ID         int        `json:"id"`
 	CreatedAt  time.Time  `json:"created_at"`
 	UpdatedAt  time.Time  `json:"updated_at"`
 	ArchivedAt *time.Time `json:"archived_at"`
@@ -25,26 +21,29 @@ func (a *AutoIncr) UpdateTime() {
 //Announcement ...
 type Announcement struct {
 	AutoIncr
-	Title      string    `json:"title"`
-	PersonID   int       `json:"person_id"` // Change to PostedBy?
-	Author     *Person   `json:"author"`
-	PostedDate time.Time `json:"posted_date"`
+	AnnouncementID int       `json:"announcement_id"`
+	Title          string    `json:"title"`
+	PersonID       int       `json:"person_id"` // Change to PostedBy?
+	Author         *Person   `json:"author"`
+	PostedDate     time.Time `json:"posted_date"`
 }
 
 //Assignment ...
 type Assignment struct {
 	AutoIncr
-	Name     string           `json:"name"`
-	CourseID int              `json:"course_id"`
-	TermID   int              `json:"term_id"`
-	GroupID  int              `json:"group_id"`
-	Group    *AssignmentGroup `json:"group"`
-	MaxScore int16            `json:"max_score"`
-	DueDate  *time.Time       `json:"due_date"`
+	AssignmentID int              `json:"assignment_id"`
+	Name         string           `json:"name"`
+	CourseID     int              `json:"course_id"`
+	TermID       int              `json:"term_id"`
+	GroupID      int              `json:"group_id"`
+	Group        *AssignmentGroup `json:"group"`
+	MaxScore     int16            `json:"max_score"`
+	DueDate      *time.Time       `json:"due_date"`
 }
 
 type AssignmentAttempts struct {
 	AutoIncr
+	AttemptID    int     `json:"attempt_id"`
 	AssignmentID int     `json:"assignment_id"`
 	PersonID     int     `json:"person_id"`
 	Score        string  `json:"score"`
@@ -54,15 +53,17 @@ type AssignmentAttempts struct {
 // AssignmentGroup ...
 type AssignmentGroup struct {
 	AutoIncr
-	Name     string  `json:"name"`
-	Weight   float64 `json:"weight"`
-	CourseID int     `json:"course_id"`
-	TermID   int     `json:"term_id"`
+	AssignmentGroupID int     `json:"group_id"`
+	Name              string  `json:"name"`
+	Weight            float64 `json:"weight"`
+	CourseID          int     `json:"course_id"`
+	TermID            int     `json:"term_id"`
 }
 
 // Course --
 type Course struct {
 	AutoIncr
+	CourseID    int    `json:"course_id"`
 	Name        string `json:"name"`
 	LevelID     int    `json:"level_id"`
 	GradeLevel  string `json:"grade_level"`
@@ -80,15 +81,17 @@ type CourseTerm struct {
 type Enrollment struct {
 	AutoIncr
 
-	PersonID int             `json:"person_id"`
-	Person   *types.JsonText `json:"person"`
-	CourseID int             `json:"course_id"`
-	TermID   int             `json:"term_id"`
+	EnrollmentID int     `json:"enrollment_id"`
+	PersonID     int     `json:"person_id"`
+	Person       *Person `json:"person"`
+	CourseID     int     `json:"course_id"`
+	TermID       int     `json:"term_id"`
 }
 
 // Person --
 type Person struct {
 	AutoIncr
+	PersonID    int            `json:"person_id"`
 	FirstName   string         `json:"first_name"`
 	MiddleName  string         `json:"middle_name"`
 	LastName    string         `json:"last_name"`
@@ -106,6 +109,7 @@ type ContactInfo struct {
 // Session --
 type Session struct {
 	AutoIncr
+	SessionID int       `json:"session_id"`
 	Token     string    `json:"token"`
 	AccountID int       `json:"account_id"`
 	ExpiresAt time.Time `json:"expires_at"`
@@ -114,18 +118,21 @@ type Session struct {
 // Term --
 type Term struct {
 	AutoIncr
+	TermID     int    `json:"term_id"`
 	Name       string `json:"name"`
 	SchoolYear int    `json:"school_year"`
 }
 
 type Level struct {
 	AutoIncr
-	Name string `json:"name"`
+	LevelID int    `json:"level_id"`
+	Name    string `json:"name"`
 }
 
 // Account --
 type Account struct {
 	AutoIncr
+	AccountID       int    `json:"account_id"`
 	PersonID        int    `json:"person_id"`
 	Email           string `json:"email"`
 	Role            string `json:"role"`

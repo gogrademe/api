@@ -5,7 +5,7 @@ import "github.com/gogrademe/api/model"
 // GetAccount --
 func (s *Store) GetAccount(id int) (*model.Account, error) {
 	var r model.Account
-	return &r, s.db.Get(&r, "select * from account WHERE id=$1", id)
+	return &r, s.db.Get(&r, "select * from account WHERE account_id=$1", id)
 }
 
 // GetAccountEmail --
@@ -29,11 +29,11 @@ func (s *Store) GetAccountList() ([]model.Account, error) {
 // InsertAccount --
 func (s *Store) InsertAccount(account *model.Account) error {
 	stmt := `INSERT INTO account (person_id, email, hashed_password, activation_token, disabled, created_at, updated_at)
-			 VALUES (:person_id, :email, :hashed_password, :activation_token, :disabled, :created_at, :updated_at) RETURNING id`
+			 VALUES (:person_id, :email, :hashed_password, :activation_token, :disabled, :created_at, :updated_at) RETURNING account_id`
 	account.UpdateTime()
 
 	var err error
-	account.ID, err = insert(s.db, stmt, account)
+	account.AccountID, err = insert(s.db, stmt, account)
 	return err
 }
 

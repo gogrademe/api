@@ -1,6 +1,6 @@
 DROP TABLE announcement,
 assignment,
-assignment_attempt,
+attempt,
 assignment_group,
 course,
 course_term,

@@ -43,7 +43,7 @@ func SetupApp(c *echo.Context) error {
 		return ErrSaving.Log(err)
 	}
 
-	u, _ := model.NewAccountFor(p.ID, p.Email)
+	u, _ := model.NewAccountFor(p.PersonID, p.Email)
 	if err := u.SetPassword(p.Password); err != nil {
 		return ErrPasswordSimple.Log(err)
 	}

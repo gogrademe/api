@@ -12,7 +12,7 @@ func NewSession(key, method string, u Account) (Session, error) {
 	token := jwt.New(jwt.GetSigningMethod(method))
 
 	tokenExpires := time.Now().UTC().Add(time.Hour * 72)
-	token.Claims["account_id"] = u.ID
+	token.Claims["account_id"] = u.AccountID
 	token.Claims["person_id"] = u.PersonID
 	token.Claims["email"] = u.Email
 	token.Claims["exp"] = tokenExpires.Unix()
@@ -25,7 +25,7 @@ func NewSession(key, method string, u Account) (Session, error) {
 
 	s = Session{
 		Token:     tokenString,
-		AccountID: u.ID,
+		AccountID: u.AccountID,
 		ExpiresAt: tokenExpires,
 	}
 

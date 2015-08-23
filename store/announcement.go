@@ -5,7 +5,7 @@ import "github.com/gogrademe/api/model"
 // GetAnnouncement --
 func (s *Store) GetAnnouncement(id int) (*model.Announcement, error) {
 	var r model.Announcement
-	return &r, s.db.Get(&r, "select * from announcement WHERE id=$1", id)
+	return &r, s.db.Get(&r, "select * from announcement WHERE announcement_id=$1", id)
 }
 
 // GetAnnouncementList --
@@ -17,11 +17,11 @@ func (s *Store) GetAnnouncementList() ([]model.Announcement, error) {
 // InsertAnnouncement --
 func (s *Store) InsertAnnouncement(announcement *model.Announcement) error {
 	stmt := `INSERT INTO announcement (title, body, posted_date, person_id, created_at, updated_at)
-			 VALUES (:title, :body, :posted_date, :person_id, :created_at, :updated_at) RETURNING id`
+			 VALUES (:title, :body, :posted_date, :person_id, :created_at, :updated_at) RETURNING announcement_id`
 	announcement.UpdateTime()
 
 	var err error
-	announcement.ID, err = insert(s.db, stmt, announcement)
+	announcement.AnnouncementID, err = insert(s.db, stmt, announcement)
 	return err
 }
 

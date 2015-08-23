@@ -1,5 +1,5 @@
 CREATE TABLE announcement (
-  id serial PRIMARY KEY,
+  announcement_id serial PRIMARY KEY,
   created_at timestamp NOT NULL,
   updated_at timestamp NOT NULL,
   archived_at timestamp NULL,
@@ -10,21 +10,21 @@ CREATE TABLE announcement (
 );
 
 CREATE TABLE assignment (
-  id serial PRIMARY KEY,
+  assignment_id serial PRIMARY KEY,
   created_at timestamp NOT NULL,
   updated_at timestamp NOT NULL,
   archived_at timestamp NULL,
   name text NOT NULL,
   max_score integer,
   due_date timestamp,
-  group_id integer NOT NULL,
+  assignment_group_id integer NOT NULL,
   term_id integer NOT NULL,
   course_id integer NOT NULL
 );
 
 
-CREATE TABLE assignment_attempt (
-  id serial PRIMARY KEY,
+CREATE TABLE attempt (
+  attempt_id serial PRIMARY KEY,
   created_at timestamp NOT NULL,
   updated_at timestamp NOT NULL,
   archived_at timestamp NULL,
@@ -35,7 +35,7 @@ CREATE TABLE assignment_attempt (
 );
 
 CREATE TABLE assignment_group (
-  id serial PRIMARY KEY,
+  assignment_group_id serial PRIMARY KEY,
   created_at timestamp NOT NULL,
   updated_at timestamp NOT NULL,
   archived_at timestamp NULL,
@@ -46,7 +46,7 @@ CREATE TABLE assignment_group (
 );
 
 CREATE TABLE course (
-  id serial PRIMARY KEY,
+  course_id serial PRIMARY KEY,
   created_at timestamp NOT NULL,
   updated_at timestamp NOT NULL,
   archived_at timestamp NULL,
@@ -71,7 +71,7 @@ CREATE TABLE email_confirmation (
 );
 
 CREATE TABLE enrollment (
-  id serial PRIMARY KEY,
+  enrollment_id serial PRIMARY KEY,
   created_at timestamp NOT NULL,
   updated_at timestamp NOT NULL,
   archived_at timestamp NULL,
@@ -82,7 +82,7 @@ CREATE TABLE enrollment (
 );
 
 CREATE TABLE person (
-  id serial PRIMARY KEY,
+  person_id serial PRIMARY KEY,
   created_at timestamp NOT NULL,
   updated_at timestamp NOT NULL,
   archived_at timestamp NULL,
@@ -103,7 +103,7 @@ CREATE TABLE contact_info (
 );
 
 CREATE TABLE session (
-  id serial PRIMARY KEY,
+  session_id serial PRIMARY KEY,
   created_at timestamp NOT NULL,
   updated_at timestamp NOT NULL,
   archived_at timestamp NULL,
@@ -113,17 +113,16 @@ CREATE TABLE session (
 );
 
 CREATE TABLE term (
-  id serial PRIMARY KEY,
+  term_id serial PRIMARY KEY,
   created_at timestamp NOT NULL,
   updated_at timestamp NOT NULL,
   archived_at timestamp NULL,
   name text NOT NULL,
   school_year int NOT NULL
-  -- UNIQUE (lower(name), school_year)
 );
 
 CREATE TABLE level (
-  id serial PRIMARY KEY,
+  level_id serial PRIMARY KEY,
   created_at timestamp NOT NULL,
   updated_at timestamp NOT NULL,
   archived_at timestamp NULL,
@@ -131,7 +130,7 @@ CREATE TABLE level (
 );
 
 CREATE TABLE account (
-  id serial PRIMARY KEY,
+  account_id serial PRIMARY KEY,
   created_at timestamp NOT NULL,
   updated_at timestamp NOT NULL,
   archived_at timestamp NULL,
