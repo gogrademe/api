@@ -18,7 +18,6 @@ func (s *Store) GetAssignmentGroupList() ([]model.AssignmentGroup, error) {
 func (s *Store) InsertAssignmentGroup(assignmentGroup *model.AssignmentGroup) error {
 	stmt := `INSERT INTO assignment_group (name, weight, course_id, term_id, created_at, updated_at)
 			 VALUES (:name, :weight,:course_id, :term_id, :created_at, :updated_at) RETURNING assignment_group_id`
-	assignmentGroup.UpdateTime()
 
 	var err error
 	assignmentGroup.AssignmentGroupID, err = insert(s.db, stmt, assignmentGroup)
@@ -28,7 +27,6 @@ func (s *Store) InsertAssignmentGroup(assignmentGroup *model.AssignmentGroup) er
 // Update --
 func (s *Store) UpdateAssignmentGroup(assignmentGroup *model.AssignmentGroup) error {
 	stmt := Update("assignment_group").SetN("name", "weight", "course_id", "term_id", "created_at", "updated_at").Eq("assignment_group_id").String()
-	assignmentGroup.UpdateTime()
 
 	_, err := s.db.NamedQuery(stmt, assignmentGroup)
 	return err

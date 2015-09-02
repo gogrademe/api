@@ -18,7 +18,6 @@ func (s *Store) GetTermList() ([]model.Term, error) {
 func (s *Store) InsertTerm(term *model.Term) error {
 	stmt := `INSERT INTO term (name,school_year, created_at, updated_at)
 			 VALUES (:name, :school_year, :created_at, :updated_at) RETURNING term_id`
-	term.UpdateTime()
 
 	var err error
 	term.TermID, err = insert(s.db, stmt, term)
@@ -28,7 +27,6 @@ func (s *Store) InsertTerm(term *model.Term) error {
 // Update --
 func (s *Store) UpdateTerm(term *model.Term) error {
 	stmt := Update("term").SetN("name", "school_year", "created_at", "updated_at").Eq("term_id").String()
-	term.UpdateTime()
 
 	_, err := s.db.NamedQuery(stmt, term)
 	return err

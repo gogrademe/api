@@ -28,7 +28,6 @@ func (s *Store) GetCourseList() ([]model.Course, error) {
 func (s *Store) InsertCourse(course *model.Course) error {
 	stmt := `INSERT INTO course (name, level_id, max_students, created_at, updated_at)
 			 VALUES (:name, :level_id, :max_students, :created_at, :updated_at) RETURNING course_id`
-	course.UpdateTime()
 
 	var err error
 	course.CourseID, err = insert(s.db, stmt, course)
@@ -44,7 +43,6 @@ func (s *Store) InsertCourseTerm(courseID, termID int) error {
 // Update --
 func (s *Store) UpdateCourse(course *model.Course) error {
 	stmt := Update("course").SetN("name", "level_id", "max_students", "created_at", "updated_at").Eq("course_id").String()
-	course.UpdateTime()
 
 	_, err := s.db.NamedQuery(stmt, course)
 	return err

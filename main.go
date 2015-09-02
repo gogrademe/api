@@ -109,7 +109,7 @@ func main() {
 	g.Delete("/:id", h.DeleteAssignment)
 
 	// AssignmentGroups
-	g = auth.Group("/assignmentGroup")
+	g = auth.Group("/assignment_group")
 	g.Get("", h.GetAllAssignmentGroups)
 	g.Post("", h.CreateAssignmentGroup)
 	g.Get("/:id", h.GetAssignmentGroup)

@@ -12,6 +12,7 @@ func (s *Store) GetAssignment(id int) (*model.Assignment, error) {
 func (s *Store) GetAssignmentList() ([]model.Assignment, error) {
 	var r []model.Assignment
 	return r, s.ru.SelectDoc("*").From(`assignment INNER JOIN assignment_group USING(assignment_group_id)`).QueryStructs(&r)
+	// return r, s.db.Select(&r, `SELECT assignment.*, row_to_json(assignment_group.*) "group" FROM assignment INNER JOIN assignment_group USING(assignment_group_id)`)
 }
 
 // GetAssignmentList --
@@ -24,7 +25,6 @@ func (s *Store) GetCourseAssignmentList(courseID, termID int) ([]model.Assignmen
 func (s *Store) InsertAssignment(assignment *model.Assignment) error {
 	stmt := `INSERT INTO assignment (name, course_id, term_id, assignment_group_id, max_score, due_date, created_at, updated_at)
 			 VALUES (:name, :course_id, :term_id, :assignment_group_id, :max_score, :due_date, :created_at, :updated_at) RETURNING assignment_id`
-	assignment.UpdateTime()
 
 	var err error
 	assignment.AssignmentID, err = insert(s.db, stmt, assignment)
@@ -34,7 +34,6 @@ func (s *Store) InsertAssignment(assignment *model.Assignment) error {
 // Update --
 func (s *Store) UpdateAssignment(assignment *model.Assignment) error {
 	stmt := Update("assignment").SetN("name", "course_id", "term_id", "assignment_group_id", "max_score", "due_date", "created_at", "updated_at").Eq("assignment_id").String()
-	assignment.UpdateTime()
 
 	_, err := s.db.NamedQuery(stmt, assignment)
 	return err

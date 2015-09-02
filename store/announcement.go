@@ -18,7 +18,6 @@ func (s *Store) GetAnnouncementList() ([]model.Announcement, error) {
 func (s *Store) InsertAnnouncement(announcement *model.Announcement) error {
 	stmt := `INSERT INTO announcement (title, body, posted_date, person_id, created_at, updated_at)
 			 VALUES (:title, :body, :posted_date, :person_id, :created_at, :updated_at) RETURNING announcement_id`
-	announcement.UpdateTime()
 
 	var err error
 	announcement.AnnouncementID, err = insert(s.db, stmt, announcement)
@@ -28,7 +27,6 @@ func (s *Store) InsertAnnouncement(announcement *model.Announcement) error {
 // Update --
 func (s *Store) UpdateAnnouncement(announcement *model.Announcement) error {
 	stmt := Update("announcement").SetN("title", "body", "posted_date", "person_id", "created_at", "updated_at").Eq("id").String()
-	announcement.UpdateTime()
 
 	_, err := s.db.NamedQuery(stmt, announcement)
 	return err

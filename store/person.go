@@ -18,7 +18,6 @@ func (s *Store) GetPersonList() ([]model.Person, error) {
 func (s *Store) InsertPerson(person *model.Person) error {
 	stmt := `INSERT INTO person (first_name, middle_name, last_name, grade_level, role, created_at, updated_at)
 			 VALUES (:first_name, :middle_name, :last_name, :grade_level, :role, :created_at, :updated_at) RETURNING person_id`
-	person.UpdateTime()
 
 	var err error
 	person.PersonID, err = insert(s.db, stmt, person)
@@ -28,7 +27,6 @@ func (s *Store) InsertPerson(person *model.Person) error {
 // Update --
 func (s *Store) UpdatePerson(person *model.Person) error {
 	stmt := Update("person").SetN("first_name", "middle_name", "last_name", "grade_level", "role", "created_at", "updated_at").Eq("person_id").String()
-	person.UpdateTime()
 
 	_, err := s.db.NamedQuery(stmt, person)
 	return err

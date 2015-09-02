@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/jmoiron/sqlx"
+	"github.com/mgutz/dat"
 	"github.com/mgutz/dat/sqlx-runner"
 	"github.com/serenize/snaker"
 )
@@ -98,6 +99,8 @@ func Connect(addr string) *Store {
 	db := sqlx.MustConnect(dburi.Scheme, dburi.String())
 	db.SetMaxIdleConns(4)
 	db.SetMaxOpenConns(16)
+
+	dat.EnableInterpolation = true
 
 	db.MapperFunc(snaker.CamelToSnake)
 	return &Store{db: db, ru: runner.NewDB(db.DB, "postgres")}

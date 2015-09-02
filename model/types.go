@@ -1,44 +1,49 @@
 package model
 
-import "time"
+import (
+	"time"
+
+	"github.com/mgutz/dat"
+)
 
 // AutoIncr contains fields that every db struct should have.
 type AutoIncr struct {
 	// ID         int        `json:"id"`
-	CreatedAt  time.Time  `json:"created_at"`
-	UpdatedAt  time.Time  `json:"updated_at"`
-	ArchivedAt *time.Time `json:"archived_at"`
+	CreatedAt  time.Time    `json:"created_at"`
+	UpdatedAt  time.Time    `json:"updated_at"`
+	ArchivedAt dat.NullTime `json:"archived_at"`
 }
 
-func (a *AutoIncr) UpdateTime() {
-	if a.CreatedAt.IsZero() {
-		a.CreatedAt = time.Now().UTC()
-	}
-	a.UpdatedAt = time.Now().UTC()
-
-}
+//
+// func (a *AutoIncr) UpdateTime() {
+// 	if a.CreatedAt.IsZero() {
+// 		a.CreatedAt = time.Now().u
+// 	}
+// 	a.UpdatedAt = time.Now().UTC()
+//
+// }
 
 //Announcement ...
 type Announcement struct {
 	AutoIncr
-	AnnouncementID int       `json:"announcement_id"`
-	Title          string    `json:"title"`
-	PersonID       int       `json:"person_id"` // Change to PostedBy?
-	Author         *Person   `json:"author"`
-	PostedDate     time.Time `json:"posted_date"`
+	AnnouncementID int          `json:"announcement_id"`
+	Title          string       `json:"title"`
+	PersonID       int          `json:"person_id"` // Change to PostedBy?
+	Author         *Person      `json:"author"`
+	PostedDate     dat.NullTime `json:"posted_date"`
 }
 
 //Assignment ...
 type Assignment struct {
 	AutoIncr
-	AssignmentID int              `json:"assignment_id"`
-	Name         string           `json:"name"`
-	CourseID     int              `json:"course_id"`
-	TermID       int              `json:"term_id"`
-	GroupID      int              `json:"group_id"`
-	Group        *AssignmentGroup `json:"group"`
-	MaxScore     int16            `json:"max_score"`
-	DueDate      *time.Time       `json:"due_date"`
+	AssignmentID      int              `json:"assignment_id"`
+	Name              string           `json:"name"`
+	CourseID          int              `json:"course_id"`
+	TermID            int              `json:"term_id"`
+	AssignmentGroupID int              `json:"assignment_group_id"`
+	Group             *AssignmentGroup `json:"group"`
+	MaxScore          int16            `json:"max_score"`
+	DueDate           dat.NullTime     `json:"due_date"`
 }
 
 type AssignmentAttempts struct {
@@ -53,7 +58,7 @@ type AssignmentAttempts struct {
 // AssignmentGroup ...
 type AssignmentGroup struct {
 	AutoIncr
-	AssignmentGroupID int     `json:"group_id"`
+	AssignmentGroupID int     `json:"assignment_group_id"`
 	Name              string  `json:"name"`
 	Weight            float64 `json:"weight"`
 	CourseID          int     `json:"course_id"`

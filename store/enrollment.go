@@ -16,7 +16,7 @@ func (s *Store) GetEnrollmentList() ([]model.Enrollment, error) {
 	// 	From("enrollment").
 	// 	QueryStructs(&r)
 	// q := `SELECT *, (SELECT row_to_json(dat__person.*) FROM (SELECT * FROM person WHERE person.id = enrollment.person_id) AS dat__person) AS person FROM enrollment`
-	stmt := `SELECT enrollment.*, row_to_json(person.*) AS person FROM enrollment INNER JOIN person ON USING(person_id)`
+	stmt := `SELECT enrollment.*, row_to_json(person.*) AS person FROM enrollment INNER JOIN person USING(person_id)`
 	return r, s.db.Select(&r, stmt)
 }
 
@@ -24,7 +24,6 @@ func (s *Store) GetEnrollmentList() ([]model.Enrollment, error) {
 func (s *Store) InsertEnrollment(enrollment *model.Enrollment) error {
 	stmt := `INSERT INTO enrollment (person_id, course_id, term_id, created_at, updated_at)
 			 VALUES (:person_id, :course_id, :term_id, :created_at, :updated_at) RETURNING enrollment_id`
-	enrollment.UpdateTime()
 
 	var err error
 	enrollment.EnrollmentID, err = insert(s.db, stmt, enrollment)
@@ -34,7 +33,6 @@ func (s *Store) InsertEnrollment(enrollment *model.Enrollment) error {
 // Update --
 func (s *Store) UpdateEnrollment(enrollment *model.Enrollment) error {
 	stmt := Update("enrollment").SetN("person_id", "course_id", "term_id", "created_at", "updated_at").Eq("enrollment_id").String()
-	enrollment.UpdateTime()
 
 	_, err := s.db.NamedQuery(stmt, enrollment)
 	return err

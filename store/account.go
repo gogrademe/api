@@ -30,7 +30,6 @@ func (s *Store) GetAccountList() ([]model.Account, error) {
 func (s *Store) InsertAccount(account *model.Account) error {
 	stmt := `INSERT INTO account (person_id, email, hashed_password, activation_token, disabled, created_at, updated_at)
 			 VALUES (:person_id, :email, :hashed_password, :activation_token, :disabled, :created_at, :updated_at) RETURNING account_id`
-	account.UpdateTime()
 
 	var err error
 	account.AccountID, err = insert(s.db, stmt, account)
@@ -47,8 +46,6 @@ func (s *Store) UpdateAccount(account *model.Account) error {
 		"disabled",
 		"created_at",
 		"updated_at").Eq("id").String()
-
-	account.UpdateTime()
 
 	_, err := s.db.NamedQuery(stmt, account)
 	return err
