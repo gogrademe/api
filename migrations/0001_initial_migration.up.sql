@@ -16,7 +16,7 @@ CREATE TABLE assignment (
   archived_at timestamp NULL,
   name text NOT NULL,
   max_score integer,
-  due_date timestamp,
+  due_date timestamp NULL,
   assignment_group_id integer NOT NULL,
   term_id integer NOT NULL,
   course_id integer NOT NULL
@@ -121,6 +121,8 @@ CREATE TABLE term (
   school_year int NOT NULL
 );
 
+
+-- level could be part of a single settings table
 CREATE TABLE level (
   level_id serial PRIMARY KEY,
   created_at timestamp NOT NULL,

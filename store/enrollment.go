@@ -11,12 +11,12 @@ func (s *Store) GetEnrollment(id int) (*model.Enrollment, error) {
 // GetEnrollmentList --
 func (s *Store) GetEnrollmentList() ([]model.Enrollment, error) {
 	var r []model.Enrollment
-	// err := s.ru.SelectDoc("enrollment.*").
-	// 	One("person", `SELECT * from person WHERE person.id = enrollment.person_id`).
-	// 	From("enrollment").
-	// 	QueryStructs(&r)
-	// q := `SELECT *, (SELECT row_to_json(dat__person.*) FROM (SELECT * FROM person WHERE person.id = enrollment.person_id) AS dat__person) AS person FROM enrollment`
-	stmt := `SELECT enrollment.*, row_to_json(person.*) AS person FROM enrollment INNER JOIN person USING(person_id)`
+	stmt := `SELECT enrollment.*,
+	 				person.first_name as "person.first_name",
+					person.middle_name as "person.middle_name",
+					person.last_name as "person.last_name",
+					person.grade_level as "person.grade_level"
+				from enrollment INNER JOIN person using(person_id)`
 	return r, s.db.Select(&r, stmt)
 }
 

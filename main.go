@@ -14,7 +14,7 @@ import (
 
 var (
 	listenAddr    = env.String("listen_addr", ":5000", "listen address")
-	dbAddr        = env.String("db_addr", "postgres://localhost/gogrademe-api-dev?sslmode=disable", "sql db address")
+	dbAddr        = env.String("db_addr", "postgres://localhost/gogrademe-api-dev?sslmode=disable&timezone=Etc/UTC", "sql db address")
 	signingkey    = env.String("jwt_key", "examplesigningkey", "key to used to sign jwt")
 	signingmethod = env.String("jwt_method", "HS256", "method used to sign jwt")
 )
@@ -23,7 +23,6 @@ func main() {
 
 	// Echo instance
 	e := echo.New()
-	e.SetDebug(true)
 
 	// Middleware
 	e.Use(mw.Logger())
@@ -68,6 +67,14 @@ func main() {
 	g.Delete("/:id", h.DeleteCourse)
 	g.Get("/:courseID/term/:termID/assignments", h.GetCourseAssignments)
 
+	// Attempt
+	g = auth.Group("/attempt")
+	g.Get("", h.GetAllAttempts)
+	g.Post("", h.CreateAttempt)
+	g.Get("/:id", h.GetAttempt)
+	g.Put("/:id", h.UpdateAttempt)
+	g.Delete("/:id", h.DeleteAttempt)
+
 	// Announcement
 	g = auth.Group("/announcement")
 	g.Get("", h.GetAllAnnouncements)
@@ -109,7 +116,7 @@ func main() {
 	g.Delete("/:id", h.DeleteAssignment)
 
 	// AssignmentGroups
-	g = auth.Group("/assignment_group")
+	g = auth.Group("/group")
 	g.Get("", h.GetAllAssignmentGroups)
 	g.Post("", h.CreateAssignmentGroup)
 	g.Get("/:id", h.GetAssignmentGroup)

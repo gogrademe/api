@@ -7,9 +7,10 @@ import (
 	"net/url"
 	"strings"
 
+	"gopkg.in/mgutz/dat.v1"
+	"gopkg.in/mgutz/dat.v1/sqlx-runner"
+
 	"github.com/jmoiron/sqlx"
-	"github.com/mgutz/dat"
-	"github.com/mgutz/dat/sqlx-runner"
 	"github.com/serenize/snaker"
 )
 
