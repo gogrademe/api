@@ -9,9 +9,32 @@ func (s *Store) GetAttempt(id int) (*model.Attempt, error) {
 }
 
 // GetAttemptList --
-func (s *Store) GetAttemptList() ([]model.Attempt, error) {
-	var r []model.Attempt
-	return r, s.db.Select(&r, "select * from attempt")
+// func (s *Store) GetAttemptList() ([]model.AttemptResponse, error) {
+// 	var r []model.AttemptResponse
+// 	stmt := `SELECT attempt.*,
+// 	person.display_name as "student.display_name",
+// 	assignment.name as "assignment.name"
+// 	FROM attempt
+// 	INNER JOIN person USING(person_id)
+// 	INNER JOIN assignment USING(assignment_id)`
+// 	return r, s.db.Select(&r, stmt)
+// }
+
+// GetAttemptList --
+func (s *Store) GetAttemptList() ([]model.AttemptResponse, error) {
+	var r []model.AttemptResponse
+	stmt := `SELECT
+attempt.*,
+person.display_name AS "student.display_name",
+row_to_json(assignment) AS assignment
+FROM enrollment
+INNER JOIN person USING(person_id)
+INNER JOIN (SELECT assignment.*, assignment_group.name AS "group_name", assignment_group.weight AS "weight" FROM assignment JOIN assignment_group USING(group_id)) AS assignment USING(course_id,term_id)
+LEFT OUTER JOIN (SELECT * FROM attempt WHERE attempt_id IN (SELECT max(attempt_id) FROM attempt GROUP BY person_id)) AS attempt USING(assignment_id, person_id)`
+
+	// return r, s.db.Select(&r, stmt)
+	// s.db.QueryRow(stmt).Scan(&r[0])
+	return r, s.db.Select(&r, stmt)
 }
 
 // InsertAttempt --

@@ -16,7 +16,8 @@ func (s *Store) GetAssignmentList() ([]model.Assignment, error) {
 	stmt := `SELECT assignment.*,
 	 		 assignment_group.name as "group.name",
 			 assignment_group.weight as "group.weight"
-			 FROM assignment INNER JOIN assignment_group USING(group_id)`
+			 FROM assignment INNER JOIN assignment_group USING(group_id)
+			 ORDER BY due_date, "group.name", assignment.name`
 	return r, s.db.Select(&r, stmt)
 }
 

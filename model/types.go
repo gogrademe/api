@@ -1,6 +1,10 @@
 package model
 
-import "time"
+import (
+	"time"
+
+	"github.com/jmoiron/sqlx/types"
+)
 
 // AutoIncr contains fields that every db struct should have.
 type AutoIncr struct {
@@ -35,11 +39,17 @@ type Assignment struct {
 // Attempt represents a score on an assignment
 type Attempt struct {
 	AutoIncr
-	AttemptID    int     `json:"attempt_id"`
-	AssignmentID int     `json:"assignment_id"`
-	PersonID     int     `json:"person_id"`
-	Score        string  `json:"score"`
-	Average      float32 `json:"grade_average"`
+	AttemptID    int      `json:"attempt_id"`
+	AssignmentID int      `json:"assignment_id"`
+	PersonID     int      `json:"person_id"`
+	Score        *string  `json:"score"`
+	ScoreNumber  *float32 `json:"score_number"`
+}
+
+type AttemptResponse struct {
+	Attempt
+	Student    *Person         `json:"student"`
+	Assignment *types.JsonText `json:"assignment"`
 }
 
 // AssignmentGroup ...
@@ -86,6 +96,7 @@ type Person struct {
 	FirstName   string         `json:"first_name"`
 	MiddleName  string         `json:"middle_name"`
 	LastName    string         `json:"last_name"`
+	DisplayName string         `json:"display_name"`
 	Role        Role           `json:"role"`
 	GradeLevel  string         `json:"grade_level"`
 	ContactInfo *[]ContactInfo `json:"contact_info"`

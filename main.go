@@ -7,7 +7,6 @@ import (
 
 	"github.com/labstack/echo"
 	mw "github.com/labstack/echo/middleware"
-	_ "github.com/lib/pq"
 	"github.com/mattaitchison/env"
 	"github.com/rs/cors"
 )
