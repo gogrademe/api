@@ -15,6 +15,7 @@ func (s *Store) GetEnrollmentList() ([]model.Enrollment, error) {
 	 				person.first_name as "person.first_name",
 					person.middle_name as "person.middle_name",
 					person.last_name as "person.last_name",
+					person.display_name as "person.display_name",
 					person.grade_level as "person.grade_level"
 				from enrollment INNER JOIN person using(person_id)`
 	return r, s.db.Select(&r, stmt)

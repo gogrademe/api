@@ -11,7 +11,7 @@ func (s *Store) GetPerson(id int) (*model.Person, error) {
 // GetPersonList --
 func (s *Store) GetPersonList() ([]model.Person, error) {
 	var r []model.Person
-	return r, s.db.Select(&r, "select * from person")
+	return r, s.db.Select(&r, "select *, person.display_name from person")
 }
 
 // InsertPerson --

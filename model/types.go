@@ -1,10 +1,6 @@
 package model
 
-import (
-	"time"
-
-	"github.com/jmoiron/sqlx/types"
-)
+import "time"
 
 // AutoIncr contains fields that every db struct should have.
 type AutoIncr struct {
@@ -46,11 +42,13 @@ type Attempt struct {
 	ScoreNumber  *float32 `json:"score_number"`
 }
 
-type AttemptResponse struct {
-	Attempt
-	Student    *Person         `json:"student"`
-	Assignment *types.JsonText `json:"assignment"`
-}
+// type AttemptResponse struct {
+// 	AttemptID  *int            `json:"attempt_id"`
+// 	Score      *string         `json:"score"`
+// 	Average    *float32        `json:"average"`
+// 	Student    *types.JsonText `json:"student"`
+// 	Assignment *types.JsonText `json:"assignment"`
+// }
 
 // AssignmentGroup ...
 type AssignmentGroup struct {
