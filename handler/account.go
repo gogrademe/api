@@ -61,10 +61,7 @@ func DeleteAccount(c *echo.Context) error {
 // ActivateAccount will activate a user account from a token or an admin.
 func ActivateAccount(c *echo.Context) error {
 	db := ToDB(c)
-	token := c.Param("token")
-
-	password := c.Form("password")
-
+	token, password := c.Param("token"), c.Form("password")
 	usr, err := db.GetAccountByToken(token)
 	if err != nil {
 		return ErrInvalidActivationToken.Log(err)

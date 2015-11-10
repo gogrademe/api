@@ -65,6 +65,7 @@ func main() {
 	g.Put("/:courseID/term/:termID", h.CreateCourseTerm)
 	g.Delete("/:id", h.DeleteCourse)
 	g.Get("/:courseID/term/:termID/assignments", h.GetCourseAssignments)
+	g.Get("/:courseID/term/:termID/gradebook", h.GetGradebook)
 
 	// Attempt
 	g = auth.Group("/attempt")
@@ -124,10 +125,6 @@ func main() {
 
 	// AssignmentGrades
 	g = auth.Group("/grade")
-	// g.Get("", notmp)
-	// g.Post("", notmp)
-	// g.Get("/:id", , notmp)
-	// g.Put("/:id", , notmp)
 
 	// Start server
 	logrus.Println("Listening On:", listenAddr)

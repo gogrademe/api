@@ -9,31 +9,26 @@ func (s *Store) GetAttempt(id int) (*model.Attempt, error) {
 }
 
 // GetAttemptList --
-// func (s *Store) GetAttemptList() ([]model.AttemptResponse, error) {
-// 	var r []model.AttemptResponse
-// 	stmt := `SELECT attempt.*,
-// 	person.display_name as "student.display_name",
-// 	assignment.name as "assignment.name"
-// 	FROM attempt
-// 	INNER JOIN person USING(person_id)
-// 	INNER JOIN assignment USING(assignment_id)`
-// 	return r, s.db.Select(&r, stmt)
-// }
-
-// GetAttemptList --
 func (s *Store) GetAttemptList() ([]model.Attempt, error) {
 	var r []model.Attempt
 	stmt := `select * from attempt`
-
-	// return r, s.db.Select(&r, stmt)
-	// s.db.QueryRow(stmt).Scan(&r[0])
 	return r, s.db.Select(&r, stmt)
+}
+
+// GetCourseTermAttemptList --
+func (s *Store) GetCourseTermAttemptList(course, term int) ([]model.Attempt, error) {
+	var r []model.Attempt
+	stmt := `SELECT attempt.*
+			FROM attempt
+			JOIN assignment using(assignment_id)
+			WHERE course_id=$1 and term_id=$2`
+	return r, s.db.Select(&r, stmt, course, term)
 }
 
 // InsertAttempt --
 func (s *Store) InsertAttempt(attempt *model.Attempt) error {
-	stmt := `INSERT INTO attempt (score, average, person_id, assignment_id, created_at, updated_at)
-			 VALUES (:score, :average, :person_id, :assignment_id, :created_at, :updated_at) RETURNING attempt_id`
+	stmt := `INSERT INTO attempt (score, person_id, assignment_id, created_at, updated_at)
+			 VALUES (:score, :person_id, :assignment_id, :created_at, :updated_at) RETURNING attempt_id`
 
 	var err error
 	attempt.AttemptID, err = insert(s.db, stmt, attempt)
@@ -42,7 +37,9 @@ func (s *Store) InsertAttempt(attempt *model.Attempt) error {
 
 // Update --
 func (s *Store) UpdateAttempt(attempt *model.Attempt) error {
-	stmt := Update("attempt").SetN("score", "average", "assignment_id", "person_id", "created_at", "updated_at").Eq("id").String()
+	stmt := Update("attempt").
+		SetN("score", "assignment_id", "person_id", "created_at", "updated_at").
+		Eq("id").String()
 
 	_, err := s.db.NamedQuery(stmt, attempt)
 	return err

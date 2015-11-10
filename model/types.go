@@ -130,6 +130,15 @@ type Level struct {
 	Name    string `json:"name"`
 }
 
+// NewAccount represents a new account
+type NewAccount struct {
+	PersonID        int    `json:"person_id"`
+	Email           string `json:"email"`
+	Role            string `json:"role"`
+	Password        string `json:"password"`
+	PasswordConfirm string `json:"password_confirm"`
+}
+
 // Account --
 type Account struct {
 	AutoIncr

@@ -14,26 +14,13 @@ func (s *Store) GetAssignment(id int) (*model.Assignment, error) {
 func (s *Store) GetAssignmentList() ([]model.Assignment, error) {
 	var r []model.Assignment
 	stmt := `SELECT assignment.*,
-	 		 assignment_group.name as "group.name",
+			 assignment_group.group_id as "group.group_id",
+			 assignment_group.name as "group.name",
 			 assignment_group.weight as "group.weight"
 			 FROM assignment INNER JOIN assignment_group USING(group_id)
 			 ORDER BY due_date, "group.name", assignment.name`
 	return r, s.db.Select(&r, stmt)
 }
-
-// GetAssignmentList --
-// func (s *Store) GetAssignmentListOld() ([]model.Assignment, error) {
-// 	var r []model.Assignment
-// 	return r, s.ru.SelectDoc(`assignment.assignment_id,
-// 		assignment.name,
-// 		max_score,
-// 		assignment.due_date::timestamptz,
-// 		assignment.created_at::timestamptz,
-// 		assignment.updated_at::timestamptz`).
-// 		One("group", `SELECT name, weight, course_id, term_id FROM assignment_group WHERE group_id = assignment.group_id`).
-// 		From(`assignment`).QueryStructs(&r)
-// 	// return r, s.db.Select(&r, `SELECT assignment.*, row_to_json(assignment_group.*) "group" FROM assignment INNER JOIN assignment_group USING(group_id)`)
-// }
 
 // GetAssignmentList --
 func (s *Store) GetCourseAssignmentList(courseID, termID int) ([]model.Assignment, error) {
