@@ -5,7 +5,7 @@ import "github.com/gogrademe/api/model"
 // GetPerson --
 func (s *Store) GetPerson(id int) (*model.Person, error) {
 	var r model.Person
-	return &r, s.db.Get(&r, "select * from person WHERE person_id=$1", id)
+	return &r, s.db.Get(&r, "select *, person.display_name from person WHERE person_id=$1", id)
 }
 
 // GetPersonList --
@@ -16,8 +16,8 @@ func (s *Store) GetPersonList() ([]model.Person, error) {
 
 // InsertPerson --
 func (s *Store) InsertPerson(person *model.Person) error {
-	stmt := `INSERT INTO person (first_name, middle_name, last_name, grade_level, role, created_at, updated_at)
-			 VALUES (:first_name, :middle_name, :last_name, :grade_level, :role, :created_at, :updated_at) RETURNING person_id`
+	stmt := `INSERT INTO person (first_name, middle_name, last_name, grade_level , created_at, updated_at)
+			 VALUES (:first_name, :middle_name, :last_name, :grade_level, :created_at, :updated_at) RETURNING person_id`
 
 	var err error
 	person.PersonID, err = insert(s.db, stmt, person)
@@ -26,7 +26,7 @@ func (s *Store) InsertPerson(person *model.Person) error {
 
 // Update --
 func (s *Store) UpdatePerson(person *model.Person) error {
-	stmt := Update("person").SetN("first_name", "middle_name", "last_name", "grade_level", "role", "created_at", "updated_at").Eq("person_id").String()
+	stmt := Update("person").SetN("first_name", "middle_name", "last_name", "grade_level", "created_at", "updated_at").Eq("person_id").String()
 
 	_, err := s.db.NamedQuery(stmt, person)
 	return err
