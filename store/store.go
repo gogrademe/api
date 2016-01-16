@@ -80,7 +80,8 @@ func (stmt *UpdateStmt) String() string {
 	return buf.String()
 }
 func Connect(addr string) *Store {
-	db := sqlx.MustConnect("pgx", addr)
+	// db := sqlx.MustConnect("pgx", addr)
+	db := sqlx.MustConnect("postgres", addr)
 	db.SetMaxIdleConns(4)
 	db.SetMaxOpenConns(16)
 	db.MapperFunc(snaker.CamelToSnake)

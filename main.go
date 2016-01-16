@@ -43,6 +43,7 @@ func main() {
 	auth := e.Group("")
 	auth.Use(h.JWTAuth(signingkey, signingmethod))
 
+	auth.Get("/me", h.GetSession)
 	// Accounts
 	auth.Get("/account", h.GetAllAccounts)
 	auth.Post("/account", h.CreateAccount)

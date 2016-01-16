@@ -12,6 +12,7 @@ import (
 const bearer = "Bearer"
 
 var ErrInvalidCredentials = NewAPIError(http.StatusUnauthorized, "invalid email and/or password")
+var ErrAccountInactive = NewAPIError(http.StatusUnauthorized, "account inactive")
 
 // LoginForm only used for retrieving login credentials.
 type LoginForm struct {
@@ -35,10 +36,10 @@ func CreateSession(key, method string) echo.HandlerFunc {
 		}
 
 		if !account.IsActive() {
-			return c.JSON(http.StatusUnauthorized, "account inactive")
+			return ErrAccountInactive.Log(err)
 		}
 		if err := account.ComparePassword(p.Password); err != nil {
-			return ErrNotAuthorized.Log(err)
+			return ErrInvalidCredentials.Log(err)
 		}
 
 		session, err := model.NewSession(key, method, *account)
@@ -55,10 +56,24 @@ func CreateSession(key, method string) echo.HandlerFunc {
 	}
 }
 
+func GetSession(c *echo.Context) error {
+	// db := ToDB(c)
+	claims := ToClaims(c)
+
+	// accountID := claims["account_id"].
+	// account, err := db.GetAccount(accountID)
+	// if err != nil {
+	// 	return ErrServerError.Log(err)
+	// }
+	//
+	// fmt.Println(claims)
+
+	return c.JSON(http.StatusOK, claims)
+}
+
 // JWTAuth is a JSON Web Token middleware
 func JWTAuth(key, method string) echo.HandlerFunc {
 	return func(c *echo.Context) error {
-
 		// Skip WebSocket
 		if (c.Request().Header.Get(echo.Upgrade)) == echo.WebSocket {
 			return nil

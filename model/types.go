@@ -42,20 +42,12 @@ type Attempt struct {
 	ScoreNumber  *float32 `json:"score_number"`
 }
 
-// type AttemptResponse struct {
-// 	AttemptID  *int            `json:"attempt_id"`
-// 	Score      *string         `json:"score"`
-// 	Average    *float32        `json:"average"`
-// 	Student    *types.JsonText `json:"student"`
-// 	Assignment *types.JsonText `json:"assignment"`
-// }
-
 // AssignmentGroup ...
 type AssignmentGroup struct {
 	AutoIncr
 	GroupID  int     `json:"group_id"`
 	Name     string  `json:"name"`
-	Weight   float64 `json:"weight"`
+	Weight   float32 `json:"weight"`
 	CourseID int     `json:"course_id"`
 	TermID   int     `json:"term_id"`
 }
@@ -95,7 +87,10 @@ type Person struct {
 	MiddleName  string         `json:"middle_name"`
 	LastName    string         `json:"last_name"`
 	DisplayName string         `json:"display_name"`
-	Role        Role           `json:"role"`
+	IsAdmin     bool           `json:"is_admin"`
+	IsStudent   bool           `json:"is_student"`
+	IsTeacher   bool           `json:"is_teacher"`
+	IsParent    bool           `json:"is_parent"`
 	GradeLevel  string         `json:"grade_level"`
 	ContactInfo *[]ContactInfo `json:"contact_info"`
 }

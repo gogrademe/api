@@ -18,10 +18,12 @@ func (s *Store) GetAttemptList() ([]model.Attempt, error) {
 // GetCourseTermAttemptList --
 func (s *Store) GetCourseTermAttemptList(course, term int) ([]model.Attempt, error) {
 	var r []model.Attempt
-	stmt := `SELECT attempt.*
-			FROM attempt
-			JOIN assignment using(assignment_id)
-			WHERE course_id=$1 and term_id=$2`
+	stmt := `SELECT DISTINCT ON (person_id,assignment_id)
+			* FROM (
+				SELECT attempt.* FROM attempt JOIN assignment using(assignment_id)
+				WHERE course_id=$1 and term_id=$2
+			) as a
+			ORDER BY person_id desc,assignment_id desc, attempt_id desc`
 	return r, s.db.Select(&r, stmt, course, term)
 }
 
@@ -35,7 +37,7 @@ func (s *Store) InsertAttempt(attempt *model.Attempt) error {
 	return err
 }
 
-// Update --
+// UpdateAttempt --
 func (s *Store) UpdateAttempt(attempt *model.Attempt) error {
 	stmt := Update("attempt").
 		SetN("score", "assignment_id", "person_id", "created_at", "updated_at").
@@ -46,7 +48,7 @@ func (s *Store) UpdateAttempt(attempt *model.Attempt) error {
 
 }
 
-// Del --
+// DeleteAttempt --
 func (s *Store) DeleteAttempt(id int) error {
 	stmt := `DELETE FROM attempt WHERE id=$1`
 

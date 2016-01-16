@@ -38,7 +38,7 @@ func SetupApp(c *echo.Context) error {
 		return ErrBind.Log(err)
 	}
 
-	p.Role = model.IsAdmin
+	p.IsAdmin = true
 	if err := db.InsertPerson(&p.Person); err != nil {
 		return ErrSaving.Log(err)
 	}

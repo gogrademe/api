@@ -17,7 +17,6 @@ func NewSession(key, method string, u Account) (Session, error) {
 	token.Claims["email"] = u.Email
 	token.Claims["exp"] = tokenExpires.Unix()
 
-	// TODO: Move this to a config file.
 	tokenString, err := token.SignedString([]byte(key))
 	if err != nil {
 		return s, err
