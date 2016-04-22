@@ -1,0 +1,21 @@
+package: github.com/gogrademe/api
+import:
+- package: github.com/Sirupsen/logrus
+- package: github.com/auth0/go-jwt-middleware
+- package: github.com/dgrijalva/jwt-go
+- package: github.com/jackc/pgx
+  subpackages:
+  - stdlib
+- package: github.com/jmoiron/sqlx
+- package: github.com/labstack/echo
+  subpackages:
+  - middleware
+- package: github.com/mattaitchison/env
+- package: github.com/rs/cors
+- package: github.com/serenize/snaker
+- package: golang.org/x/crypto
+  subpackages:
+  - bcrypt
+- package: gopkg.in/mgutz/dat.v1
+  subpackages:
+  - sqlx-runner
