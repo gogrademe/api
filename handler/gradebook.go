@@ -6,7 +6,7 @@ import (
 	"github.com/labstack/echo"
 )
 
-func GetGradebook(c *echo.Context) error {
+func GetGradebook(c echo.Context) error {
 	db := ToDB(c)
 	course, _ := strconv.Atoi(c.Param("courseID"))
 	term, _ := strconv.Atoi(c.Param("termID"))

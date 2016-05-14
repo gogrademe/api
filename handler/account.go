@@ -16,7 +16,7 @@ var (
 )
 
 // GetAllAccounts http endpoint to return all accounts.
-func GetAllAccounts(c *echo.Context) error {
+func GetAllAccounts(c echo.Context) error {
 	db := ToDB(c)
 
 	r, err := db.GetAccountList()
@@ -28,7 +28,7 @@ func GetAllAccounts(c *echo.Context) error {
 
 }
 
-func CreateAccount(c *echo.Context) error {
+func CreateAccount(c echo.Context) error {
 	a := &model.Account{}
 	if err := c.Bind(a); err != nil {
 		return ErrBind.Log(err)
@@ -47,7 +47,7 @@ func CreateAccount(c *echo.Context) error {
 	return c.JSON(http.StatusCreated, na)
 }
 
-func DeleteAccount(c *echo.Context) error {
+func DeleteAccount(c echo.Context) error {
 	db := ToDB(c)
 	id, _ := strconv.Atoi(c.Param("id"))
 
@@ -59,9 +59,9 @@ func DeleteAccount(c *echo.Context) error {
 }
 
 // ActivateAccount will activate a user account from a token or an admin.
-func ActivateAccount(c *echo.Context) error {
+func ActivateAccount(c echo.Context) error {
 	db := ToDB(c)
-	token, password := c.Param("token"), c.Form("password")
+	token, password := c.Param("token"), c.FormValue("password")
 	usr, err := db.GetAccountByToken(token)
 	if err != nil {
 		return ErrInvalidActivationToken.Log(err)

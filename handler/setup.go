@@ -15,7 +15,7 @@ type Setup struct {
 }
 
 // CanSetup returns StatusOK if able to proceed with setup
-func CanSetup(c *echo.Context) error {
+func CanSetup(c echo.Context) error {
 	db := ToDB(c)
 	accts, err := db.GetAccountList()
 	if len(accts) > 0 || err != nil {
@@ -26,7 +26,7 @@ func CanSetup(c *echo.Context) error {
 }
 
 // SetupApp allows the creation of a admin account if no accounts exist.
-func SetupApp(c *echo.Context) error {
+func SetupApp(c echo.Context) error {
 	db := ToDB(c)
 	accts, err := db.GetAccountList()
 	if len(accts) > 0 || err != nil {

@@ -8,7 +8,7 @@ import (
 	"github.com/labstack/echo"
 )
 
-func CreateAssignmentGroup(c *echo.Context) error {
+func CreateAssignmentGroup(c echo.Context) error {
 	p := &model.AssignmentGroup{}
 	if err := c.Bind(p); err != nil {
 		return c.JSON(http.StatusBadRequest, err)
@@ -22,7 +22,7 @@ func CreateAssignmentGroup(c *echo.Context) error {
 	return c.JSON(http.StatusCreated, p)
 }
 
-func GetAllAssignmentGroups(c *echo.Context) error {
+func GetAllAssignmentGroups(c echo.Context) error {
 	db := ToDB(c)
 
 	ppl, err := db.GetAssignmentGroupList()
@@ -34,7 +34,7 @@ func GetAllAssignmentGroups(c *echo.Context) error {
 
 }
 
-func GetAssignmentGroup(c *echo.Context) error {
+func GetAssignmentGroup(c echo.Context) error {
 	db := ToDB(c)
 	id, _ := strconv.Atoi(c.Param("id"))
 	ppl, err := db.GetAssignmentGroup(id)
@@ -46,7 +46,7 @@ func GetAssignmentGroup(c *echo.Context) error {
 
 }
 
-func DeleteAssignmentGroup(c *echo.Context) error {
+func DeleteAssignmentGroup(c echo.Context) error {
 	db := ToDB(c)
 	id, _ := strconv.Atoi(c.Param("id"))
 
@@ -57,7 +57,7 @@ func DeleteAssignmentGroup(c *echo.Context) error {
 	return c.JSON(http.StatusOK, nil)
 }
 
-func UpdateAssignmentGroup(c *echo.Context) error {
+func UpdateAssignmentGroup(c echo.Context) error {
 	p := &model.AssignmentGroup{}
 	if err := c.Bind(p); err != nil {
 		return c.JSON(http.StatusBadRequest, err)

@@ -8,7 +8,7 @@ import (
 	"github.com/labstack/echo"
 )
 
-func CreateAttempt(c *echo.Context) error {
+func CreateAttempt(c echo.Context) error {
 	p := &model.Attempt{}
 	if err := c.Bind(p); err != nil {
 		return c.JSON(http.StatusBadRequest, err)
@@ -22,7 +22,7 @@ func CreateAttempt(c *echo.Context) error {
 	return c.JSON(http.StatusCreated, p)
 }
 
-func GetAllAttempts(c *echo.Context) error {
+func GetAllAttempts(c echo.Context) error {
 	db := ToDB(c)
 
 	ppl, err := db.GetAttemptList()
@@ -35,7 +35,7 @@ func GetAllAttempts(c *echo.Context) error {
 
 }
 
-func GetAttempt(c *echo.Context) error {
+func GetAttempt(c echo.Context) error {
 	db := ToDB(c)
 	id, _ := strconv.Atoi(c.Param("id"))
 	ppl, err := db.GetAttempt(id)
@@ -47,7 +47,7 @@ func GetAttempt(c *echo.Context) error {
 
 }
 
-func DeleteAttempt(c *echo.Context) error {
+func DeleteAttempt(c echo.Context) error {
 	db := ToDB(c)
 	id, _ := strconv.Atoi(c.Param("id"))
 
@@ -58,7 +58,7 @@ func DeleteAttempt(c *echo.Context) error {
 	return c.JSON(http.StatusOK, nil)
 }
 
-func UpdateAttempt(c *echo.Context) error {
+func UpdateAttempt(c echo.Context) error {
 	p := &model.Attempt{}
 	if err := c.Bind(p); err != nil {
 		return c.JSON(http.StatusBadRequest, err)

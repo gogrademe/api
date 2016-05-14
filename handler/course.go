@@ -8,7 +8,7 @@ import (
 	"github.com/labstack/echo"
 )
 
-func CreateCourse(c *echo.Context) error {
+func CreateCourse(c echo.Context) error {
 	p := &model.Course{}
 	if err := c.Bind(p); err != nil {
 		return c.JSON(http.StatusBadRequest, err)
@@ -22,7 +22,7 @@ func CreateCourse(c *echo.Context) error {
 	return c.JSON(http.StatusCreated, p)
 }
 
-func CreateCourseTerm(c *echo.Context) error {
+func CreateCourseTerm(c echo.Context) error {
 	courseID, _ := strconv.Atoi(c.Param("courseID"))
 	termID, _ := strconv.Atoi(c.Param("termID"))
 
@@ -33,7 +33,7 @@ func CreateCourseTerm(c *echo.Context) error {
 	return c.NoContent(http.StatusCreated)
 }
 
-func GetAllCourses(c *echo.Context) error {
+func GetAllCourses(c echo.Context) error {
 	db := ToDB(c)
 
 	ppl, err := db.GetCourseList()
@@ -45,7 +45,7 @@ func GetAllCourses(c *echo.Context) error {
 
 }
 
-func GetCourse(c *echo.Context) error {
+func GetCourse(c echo.Context) error {
 	db := ToDB(c)
 	id, _ := strconv.Atoi(c.Param("id"))
 	ppl, err := db.GetCourse(id)
@@ -57,7 +57,7 @@ func GetCourse(c *echo.Context) error {
 
 }
 
-func DeleteCourse(c *echo.Context) error {
+func DeleteCourse(c echo.Context) error {
 	db := ToDB(c)
 	id, _ := strconv.Atoi(c.Param("id"))
 
@@ -68,7 +68,7 @@ func DeleteCourse(c *echo.Context) error {
 	return c.JSON(http.StatusOK, nil)
 }
 
-func UpdateCourse(c *echo.Context) error {
+func UpdateCourse(c echo.Context) error {
 	p := &model.Course{}
 	if err := c.Bind(p); err != nil {
 		return c.JSON(http.StatusBadRequest, err)

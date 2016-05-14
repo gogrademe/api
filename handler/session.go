@@ -23,7 +23,7 @@ type LoginForm struct {
 // CreateSession retrieves a user account, checks if active and compares hashed
 // password with provided password.
 func CreateSession(key, method string) echo.HandlerFunc {
-	return func(c *echo.Context) error {
+	return func(c echo.Context) error {
 		p := &LoginForm{}
 		if err := c.Bind(p); err != nil {
 			return ErrBind.Log(err)
@@ -51,35 +51,24 @@ func CreateSession(key, method string) echo.HandlerFunc {
 			return c.JSON(http.StatusInternalServerError, err.Error())
 		}
 
-		return c.JSON(http.StatusCreated, session)
+		person, _ := db.GetPerson(account.PersonID)
+		session.Account.Person = person
 
+		return c.JSON(http.StatusCreated, session)
 	}
 }
 
-func GetSession(c *echo.Context) error {
+func GetSession(c echo.Context) error {
 	// db := ToDB(c)
 	claims := ToClaims(c)
-
-	// accountID := claims["account_id"].
-	// account, err := db.GetAccount(accountID)
-	// if err != nil {
-	// 	return ErrServerError.Log(err)
-	// }
-	//
-	// fmt.Println(claims)
-
 	return c.JSON(http.StatusOK, claims)
 }
 
 // JWTAuth is a JSON Web Token middleware
 func JWTAuth(key, method string) echo.HandlerFunc {
-	return func(c *echo.Context) error {
-		// Skip WebSocket
-		if (c.Request().Header.Get(echo.Upgrade)) == echo.WebSocket {
-			return nil
-		}
+	return func(c echo.Context) error {
 
-		auth := c.Request().Header.Get("Authorization")
+		auth := c.Request().Header().Get("Authorization")
 		l := len(bearer)
 
 		if len(auth) > l+1 && auth[:l] == bearer {

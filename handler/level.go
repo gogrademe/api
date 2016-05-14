@@ -8,7 +8,7 @@ import (
 	"github.com/labstack/echo"
 )
 
-func CreateLevel(c *echo.Context) error {
+func CreateLevel(c echo.Context) error {
 	p := &model.Level{}
 	if err := c.Bind(p); err != nil {
 		return ErrBind.Log(err)
@@ -22,7 +22,7 @@ func CreateLevel(c *echo.Context) error {
 	return c.JSON(http.StatusCreated, p)
 }
 
-func GetAllLevels(c *echo.Context) error {
+func GetAllLevels(c echo.Context) error {
 	db := ToDB(c)
 
 	ppl, err := db.GetLevelList()
@@ -34,7 +34,7 @@ func GetAllLevels(c *echo.Context) error {
 
 }
 
-func GetLevel(c *echo.Context) error {
+func GetLevel(c echo.Context) error {
 	db := ToDB(c)
 	id, _ := strconv.Atoi(c.Param("id"))
 	ppl, err := db.GetLevel(id)
@@ -46,7 +46,7 @@ func GetLevel(c *echo.Context) error {
 
 }
 
-func DeleteLevel(c *echo.Context) error {
+func DeleteLevel(c echo.Context) error {
 	db := ToDB(c)
 	id, _ := strconv.Atoi(c.Param("id"))
 
@@ -57,7 +57,7 @@ func DeleteLevel(c *echo.Context) error {
 	return c.JSON(http.StatusOK, nil)
 }
 
-func UpdateLevel(c *echo.Context) error {
+func UpdateLevel(c echo.Context) error {
 	p := &model.Level{}
 	if err := c.Bind(p); err != nil {
 		return c.JSON(http.StatusBadRequest, err)

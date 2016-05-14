@@ -8,7 +8,7 @@ import (
 	"github.com/labstack/echo"
 )
 
-func CreateAnnouncement(c *echo.Context) error {
+func CreateAnnouncement(c echo.Context) error {
 	p := &model.Announcement{}
 	if err := c.Bind(p); err != nil {
 		return c.JSON(http.StatusBadRequest, err)
@@ -22,7 +22,7 @@ func CreateAnnouncement(c *echo.Context) error {
 	return c.JSON(http.StatusCreated, p)
 }
 
-func GetAllAnnouncements(c *echo.Context) error {
+func GetAllAnnouncements(c echo.Context) error {
 	db := ToDB(c)
 
 	ppl, err := db.GetAnnouncementList()
@@ -34,7 +34,7 @@ func GetAllAnnouncements(c *echo.Context) error {
 
 }
 
-func GetAnnouncement(c *echo.Context) error {
+func GetAnnouncement(c echo.Context) error {
 	db := ToDB(c)
 	id, _ := strconv.Atoi(c.Param("id"))
 	ppl, err := db.GetAnnouncement(id)
@@ -46,7 +46,7 @@ func GetAnnouncement(c *echo.Context) error {
 
 }
 
-func DeleteAnnouncement(c *echo.Context) error {
+func DeleteAnnouncement(c echo.Context) error {
 	db := ToDB(c)
 	id, _ := strconv.Atoi(c.Param("id"))
 
@@ -57,7 +57,7 @@ func DeleteAnnouncement(c *echo.Context) error {
 	return c.JSON(http.StatusOK, nil)
 }
 
-func UpdateAnnouncement(c *echo.Context) error {
+func UpdateAnnouncement(c echo.Context) error {
 	p := &model.Announcement{}
 	if err := c.Bind(p); err != nil {
 		return c.JSON(http.StatusBadRequest, err)

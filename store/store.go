@@ -4,11 +4,13 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"log"
 	"strings"
 
 	"gopkg.in/mgutz/dat.v1"
 	"gopkg.in/mgutz/dat.v1/sqlx-runner"
 
+	"github.com/gogrademe/api/model"
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
 	"github.com/serenize/snaker"
@@ -79,6 +81,41 @@ func (stmt *UpdateStmt) String() string {
 
 	return buf.String()
 }
+
+func (s *Store) EnsureAdmin() {
+
+	accts, err := s.GetAccountList()
+	if err != nil {
+		log.Fatal("error retrieving accounts: ", err)
+	}
+
+	if len(accts) > 0 {
+		return
+	}
+
+	p := &model.Person{
+		FirstName: "admin",
+	}
+
+	if err := s.InsertPerson(p); err != nil {
+		log.Fatal(err)
+	}
+
+	u, _ := model.NewAccountFor(p.PersonID, "admin@host.local")
+	if err := u.SetPassword("admin123"); err != nil {
+		log.Fatal(err)
+	}
+
+	u.SetActive()
+
+	if err := s.InsertAccount(u); err != nil {
+		log.Fatal(err)
+	}
+
+	log.Println("created default admin account")
+
+}
+
 func Connect(addr string) *Store {
 	// db := sqlx.MustConnect("pgx", addr)
 	db := sqlx.MustConnect("postgres", addr)

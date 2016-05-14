@@ -68,5 +68,8 @@ func (u *Account) SetPassword(password string) error {
 
 // ComparePassword returns an error if password doesn't match password hash
 func (u *Account) ComparePassword(password string) error {
+	if u.HashedPassword == "" {
+		return ErrInvalidPassword
+	}
 	return bcrypt.CompareHashAndPassword([]byte(u.HashedPassword), []byte(password))
 }

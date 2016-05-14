@@ -1,47 +1,86 @@
 package main
 
 import (
+	"encoding/base64"
+	"net/http"
+
 	"github.com/Sirupsen/logrus"
 	h "github.com/gogrademe/api/handler"
 	"github.com/gogrademe/api/store"
 
 	"github.com/labstack/echo"
+	"github.com/labstack/echo/engine/standard"
 	mw "github.com/labstack/echo/middleware"
 	"github.com/mattaitchison/env"
-	"github.com/rs/cors"
 )
 
 var (
-	listenAddr    = env.String("listen_addr", ":5000", "listen address")
-	dbAddr        = env.String("db_addr", "postgres://localhost/gogrademe-api-dev?sslmode=disable&timezone=Etc/UTC", "sql db address")
-	signingkey    = env.String("jwt_key", "examplesigningkey", "key to used to sign jwt")
-	signingmethod = env.String("jwt_method", "HS256", "method used to sign jwt")
+	listenAddr = env.String("listen_addr", ":5000", "listen address")
+	dbAddr     = env.String("db_addr", "postgres://localhost/gogrademe-api-dev?sslmode=disable&timezone=Etc/UTC", "sql db address")
+	signingkey = env.String("jwt_key", "examplesigningkey", "key to used to sign jwt")
+	// signingmethod = env.String("jwt_method", "HS256", "method used to sign jwt")
 )
 
 func main() {
-
+	logrus.Println(signingkey)
 	// Echo instance
 	e := echo.New()
 
 	// Middleware
+	//
 	e.Use(mw.Logger())
-	e.Use(mw.Recover())
-
-	e.Use(cors.New(cors.Options{
-		AllowedHeaders: []string{"*"},
-		AllowedMethods: []string{"GET", "POST", "DELETE", "PUT"},
-	}).Handler)
+	// e.Use(mw.Recover())
+	e.Use(mw.CORS())
+	// echo.WrapMiddleware(cors.New(cors.Options{
+	// 	AllowedHeaders: []string{"*"},
+	// 	AllowedMethods: []string{"GET", "POST", "DELETE", "PUT"},
+	// }).Handler())
+	// e.Use(cors.New(cors.Options{
+	// 	AllowedHeaders: []string{"*"},
+	// 	AllowedMethods: []string{"GET", "POST", "DELETE", "PUT"},
+	// }))
 
 	// Setup DB
-	e.Use(h.SetDB(store.Connect(dbAddr)))
+	s := store.Connect(dbAddr)
+	s.EnsureAdmin()
+	e.Use(h.SetDB(s))
 
-	e.Post("/session", h.CreateSession(signingkey, signingmethod))
+	// catch sql no rows errors and return as a 404
+	e.Use(func(h echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			err := h(c)
+			if err == store.ErrNoRows {
+				return echo.NewHTTPError(http.StatusNotFound)
+			}
+			return err
+		}
+	})
+
+	// e.Post("/session", h.CreateSession(signingkey, signingmethod))
 	e.Post("/activate/:token", h.ActivateAccount)
 	e.Get("/setup", h.CanSetup)
 	e.Post("/setup", h.SetupApp)
 
 	auth := e.Group("")
-	auth.Use(h.JWTAuth(signingkey, signingmethod))
+
+	// jwtMiddleware := jwtmiddleware.New(jwtmiddleware.Options{
+	// 	ValidationKeyGetter: func(token *jwt.Token) (interface{}, error) {
+	// 		decoded, err := base64.URLEncoding.DecodeString(signingkey)
+	// 		if err != nil {
+	// 			return nil, err
+	// 		}
+	// 		return decoded, nil
+	// 	},
+	// })
+	decoded, err := base64.URLEncoding.DecodeString(signingkey)
+	if err != nil {
+		panic(err)
+	}
+	auth.Use(mw.JWT(decoded))
+	// auth.Use(jwtMiddleware.Handler)
+
+	// auth.Use(echo.WrapMiddleware(jwtMiddleware.Handler))
+	// auth.Use(h.JWTAuth(signingkey, signingmethod))
 
 	auth.Get("/me", h.GetSession)
 	// Accounts
@@ -51,83 +90,84 @@ func main() {
 
 	// People
 	g := auth.Group("/person")
-	g.Get("", h.GetAllPeople)
-	g.Post("", h.CreatePerson)
-	g.Get("/:id", h.GetPerson)
-	g.Put("/:id", h.UpdatePerson)
-	g.Delete("/:id", h.DeletePerson)
+	g.GET("", h.GetAllPeople)
+	g.POST("", h.CreatePerson)
+	g.GET("/:id", h.GetPerson)
+	g.PUT("/:id", h.UpdatePerson)
+	g.DELETE("/:id", h.DeletePerson)
 
 	// Courses
 	g = auth.Group("/course")
-	g.Get("", h.GetAllCourses)
-	g.Post("", h.CreateCourse)
-	g.Get("/:id", h.GetCourse)
-	g.Put("/:id", h.UpdateCourse)
-	g.Put("/:courseID/term/:termID", h.CreateCourseTerm)
-	g.Delete("/:id", h.DeleteCourse)
-	g.Get("/:courseID/term/:termID/assignments", h.GetCourseAssignments)
-	g.Get("/:courseID/term/:termID/gradebook", h.GetGradebook)
+	g.GET("", h.GetAllCourses)
+	g.POST("", h.CreateCourse)
+	g.GET("/:id", h.GetCourse)
+	g.PUT("/:id", h.UpdateCourse)
+	g.PUT("/:courseID/term/:termID", h.CreateCourseTerm)
+	g.DELETE("/:id", h.DeleteCourse)
+	g.GET("/:courseID/term/:termID/assignments", h.GetCourseAssignments)
+	g.GET("/:courseID/term/:termID/gradebook", h.GetGradebook)
 
 	// Attempt
 	g = auth.Group("/attempt")
-	g.Get("", h.GetAllAttempts)
-	g.Post("", h.CreateAttempt)
-	g.Get("/:id", h.GetAttempt)
-	g.Put("/:id", h.UpdateAttempt)
-	g.Delete("/:id", h.DeleteAttempt)
+	g.GET("", h.GetAllAttempts)
+	g.POST("", h.CreateAttempt)
+	g.GET("/:id", h.GetAttempt)
+	g.PUT("/:id", h.UpdateAttempt)
+	g.DELETE("/:id", h.DeleteAttempt)
 
 	// Announcement
 	g = auth.Group("/announcement")
-	g.Get("", h.GetAllAnnouncements)
-	g.Post("", h.CreateAnnouncement)
-	g.Get("/:id", h.GetAnnouncement)
-	g.Put("/:id", h.UpdateAnnouncement)
-	g.Delete("/:id", h.DeleteAnnouncement)
+	g.GET("", h.GetAllAnnouncements)
+	g.POST("", h.CreateAnnouncement)
+	g.GET("/:id", h.GetAnnouncement)
+	g.PUT("/:id", h.UpdateAnnouncement)
+	g.DELETE("/:id", h.DeleteAnnouncement)
 
 	// Enrollments
 	g = auth.Group("/enrollment")
-	g.Get("", h.GetAllEnrollments)
-	g.Post("", h.CreateEnrollment)
-	g.Get("/:id", h.GetEnrollment)
-	g.Put("/:id", h.UpdateEnrollment)
-	g.Delete("/:id", h.DeleteEnrollment)
+	g.GET("", h.GetAllEnrollments)
+	g.POST("", h.CreateEnrollment)
+	g.GET("/:id", h.GetEnrollment)
+	g.PUT("/:id", h.UpdateEnrollment)
+	g.DELETE("/:id", h.DeleteEnrollment)
 
 	// Terms
 	g = auth.Group("/term")
-	g.Get("", h.GetAllTerms)
-	g.Post("", h.CreateTerm)
-	g.Get("/:id", h.GetTerm)
-	g.Put("/:id", h.UpdateTerm)
-	g.Delete("/:id", h.DeleteTerm)
+	g.GET("", h.GetAllTerms)
+	g.POST("", h.CreateTerm)
+	g.GET("/:id", h.GetTerm)
+	g.PUT("/:id", h.UpdateTerm)
+	g.DELETE("/:id", h.DeleteTerm)
 
 	// Levels
 	g = auth.Group("/level")
-	g.Get("", h.GetAllLevels)
-	g.Post("", h.CreateLevel)
-	g.Get("/:id", h.GetLevel)
-	g.Put("/:id", h.UpdateLevel)
-	g.Delete("/:id", h.DeleteLevel)
+	g.GET("", h.GetAllLevels)
+	g.POST("", h.CreateLevel)
+	g.GET("/:id", h.GetLevel)
+	g.PUT("/:id", h.UpdateLevel)
+	g.DELETE("/:id", h.DeleteLevel)
 
 	// Assignments
 	g = auth.Group("/assignment")
-	g.Get("", h.GetAllAssignments)
-	g.Post("", h.CreateAssignment)
-	g.Get("/:id", h.GetAssignment)
-	g.Put("/:id", h.UpdateAssignment)
-	g.Delete("/:id", h.DeleteAssignment)
+	g.GET("", h.GetAllAssignments)
+	g.POST("", h.CreateAssignment)
+	g.GET("/:id", h.GetAssignment)
+	g.PUT("/:id", h.UpdateAssignment)
+	g.DELETE("/:id", h.DeleteAssignment)
 
 	// AssignmentGroups
 	g = auth.Group("/group")
-	g.Get("", h.GetAllAssignmentGroups)
-	g.Post("", h.CreateAssignmentGroup)
-	g.Get("/:id", h.GetAssignmentGroup)
-	g.Put("/:id", h.UpdateAssignmentGroup)
-	g.Delete("/:id", h.DeleteAssignmentGroup)
+	g.GET("", h.GetAllAssignmentGroups)
+	g.POST("", h.CreateAssignmentGroup)
+	g.GET("/:id", h.GetAssignmentGroup)
+	g.PUT("/:id", h.UpdateAssignmentGroup)
+	g.DELETE("/:id", h.DeleteAssignmentGroup)
 
 	// AssignmentGrades
 	g = auth.Group("/grade")
 
 	// Start server
 	logrus.Println("Listening On:", listenAddr)
-	e.Run(listenAddr)
+
+	e.Run(standard.New(listenAddr))
 }

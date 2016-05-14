@@ -21,7 +21,7 @@ func NewAPIError(code int, msg ...string) *APIError {
 
 func (e *APIError) Log(err error, msg ...string) *echo.HTTPError {
 	logrus.WithFields(logrus.Fields{
-		"code":  e.eh.Code(),
+		"code":  e.eh.Code,
 		"error": err,
 		"msgs":  msg,
 	}).Warn(e.eh.Error())

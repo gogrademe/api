@@ -107,6 +107,7 @@ type Session struct {
 	SessionID int       `json:"session_id"`
 	Token     string    `json:"token"`
 	AccountID int       `json:"account_id"`
+	Account   *Account  `json:"account"`
 	ExpiresAt time.Time `json:"expires_at"`
 }
 
@@ -137,11 +138,12 @@ type NewAccount struct {
 // Account --
 type Account struct {
 	AutoIncr
-	AccountID       int    `json:"account_id"`
-	PersonID        int    `json:"person_id"`
-	Email           string `json:"email"`
-	Role            string `json:"role"`
-	HashedPassword  string `json:"-"`
-	ActivationToken string `json:"-"` // base64 url encoded random hash.
-	Disabled        bool   `json:"disabled"`
+	AccountID       int     `json:"account_id"`
+	PersonID        int     `json:"person_id"`
+	Person          *Person `json:"person"`
+	Email           string  `json:"email"`
+	Role            string  `json:"role"`
+	HashedPassword  string  `json:"-"`
+	ActivationToken string  `json:"-"` // base64 url encoded random hash.
+	Disabled        bool    `json:"disabled"`
 }

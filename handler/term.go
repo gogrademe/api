@@ -8,7 +8,7 @@ import (
 	"github.com/labstack/echo"
 )
 
-func CreateTerm(c *echo.Context) error {
+func CreateTerm(c echo.Context) error {
 	p := &model.Term{}
 	if err := c.Bind(p); err != nil {
 		return c.JSON(http.StatusBadRequest, err)
@@ -22,7 +22,7 @@ func CreateTerm(c *echo.Context) error {
 	return c.JSON(http.StatusCreated, p)
 }
 
-func GetAllTerms(c *echo.Context) error {
+func GetAllTerms(c echo.Context) error {
 	db := ToDB(c)
 
 	ppl, err := db.GetTermList()
@@ -34,7 +34,7 @@ func GetAllTerms(c *echo.Context) error {
 
 }
 
-func GetTerm(c *echo.Context) error {
+func GetTerm(c echo.Context) error {
 	db := ToDB(c)
 	id, _ := strconv.Atoi(c.Param("id"))
 	ppl, err := db.GetTerm(id)
@@ -46,7 +46,7 @@ func GetTerm(c *echo.Context) error {
 
 }
 
-func DeleteTerm(c *echo.Context) error {
+func DeleteTerm(c echo.Context) error {
 	db := ToDB(c)
 	id, _ := strconv.Atoi(c.Param("id"))
 
@@ -57,7 +57,7 @@ func DeleteTerm(c *echo.Context) error {
 	return c.JSON(http.StatusOK, nil)
 }
 
-func UpdateTerm(c *echo.Context) error {
+func UpdateTerm(c echo.Context) error {
 	p := &model.Term{}
 	if err := c.Bind(p); err != nil {
 		return c.JSON(http.StatusBadRequest, err)

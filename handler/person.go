@@ -8,7 +8,7 @@ import (
 	"github.com/labstack/echo"
 )
 
-func CreatePerson(c *echo.Context) error {
+func CreatePerson(c echo.Context) error {
 	p := &model.Person{}
 	if err := c.Bind(p); err != nil {
 		return c.JSON(http.StatusBadRequest, err)
@@ -22,7 +22,7 @@ func CreatePerson(c *echo.Context) error {
 	return c.JSON(http.StatusCreated, p)
 }
 
-func GetAllPeople(c *echo.Context) error {
+func GetAllPeople(c echo.Context) error {
 	db := ToDB(c)
 
 	ppl, err := db.GetPersonList()
@@ -34,7 +34,7 @@ func GetAllPeople(c *echo.Context) error {
 
 }
 
-func GetPerson(c *echo.Context) error {
+func GetPerson(c echo.Context) error {
 	db := ToDB(c)
 	id, _ := strconv.Atoi(c.Param("id"))
 	ppl, err := db.GetPerson(id)
@@ -46,7 +46,7 @@ func GetPerson(c *echo.Context) error {
 
 }
 
-func DeletePerson(c *echo.Context) error {
+func DeletePerson(c echo.Context) error {
 	db := ToDB(c)
 	id, _ := strconv.Atoi(c.Param("id"))
 
@@ -57,7 +57,7 @@ func DeletePerson(c *echo.Context) error {
 	return c.JSON(http.StatusOK, nil)
 }
 
-func UpdatePerson(c *echo.Context) error {
+func UpdatePerson(c echo.Context) error {
 	p := &model.Person{}
 	if err := c.Bind(p); err != nil {
 		return c.JSON(http.StatusBadRequest, err)

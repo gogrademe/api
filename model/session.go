@@ -26,6 +26,7 @@ func NewSession(key, method string, u Account) (Session, error) {
 		Token:     tokenString,
 		AccountID: u.AccountID,
 		ExpiresAt: tokenExpires,
+		Account:   &u,
 	}
 
 	return s, err
