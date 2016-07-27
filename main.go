@@ -6,6 +6,7 @@ import (
 	"github.com/Sirupsen/logrus"
 	h "github.com/gogrademe/api/handler"
 	"github.com/gogrademe/api/store"
+	"github.com/mattes/migrate/migrate"
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/engine/standard"
@@ -21,7 +22,14 @@ var (
 )
 
 func main() {
-	logrus.Println(signingkey)
+	logrus.Println("running migrations")
+	allErrors, ok := migrate.UpSync(dbAddr, "./migrations")
+	if !ok {
+		logrus.Println("Oh no ...")
+		logrus.Fatal(allErrors)
+		// do sth with allErrors slice
+	}
+
 	// Echo instance
 	e := echo.New()
 	e.Use(mw.LoggerWithConfig(mw.LoggerConfig{

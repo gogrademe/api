@@ -1,5 +1,5 @@
-hash: b2201bb1c61eb324c0e59b2eb13251a38e27f27ebc8381d957aaa54d7d726358
-updated: 2016-07-26T21:43:03.573663239-05:00
+hash: ff50ae172d31a74b090ce568c05ba1bb5052d175983c8165593d3253f6bacdc1
+updated: 2016-07-26T22:09:54.625322875-05:00
 imports:
 - name: github.com/auth0/go-jwt-middleware
   version: f3f7de3b9e394e3af3b88e1b9457f6f71d1ae0ac
@@ -12,6 +12,18 @@ imports:
   subpackages:
   - redis
   - internal
+- name: github.com/go-sql-driver/mysql
+  version: 3654d25ec346ee8ce71a68431025458d52a38ac0
+- name: github.com/gocql/gocql
+  version: 94f1315e46b0b2eae3a48a77a49e3e1cc9377923
+  subpackages:
+  - internal/lru
+  - internal/murmur
+  - internal/streams
+- name: github.com/golang/snappy
+  version: d9eb7a3d35ec988b8585d4a0068e462c27d28380
+- name: github.com/hailocab/go-hostpool
+  version: e80d13ce29ede4452c43dea11e79b9bc8a15b478
 - name: github.com/jackc/pgx
   version: 558d5550cf5c08e7192eb2eb8635f21f4b700ff5
   subpackages:
@@ -40,6 +52,18 @@ imports:
   - oid
 - name: github.com/mattaitchison/env
   version: 8aa9e03837ecf8f01aadb99f04cd7d8da33da5de
+- name: github.com/mattes/migrate
+  version: bbc885c280e9063210bbf1d0482db87e5045725c
+  subpackages:
+  - migrate
+  - driver
+  - file
+  - migrate/direction
+  - pipe
+  - driver/bash
+  - driver/cassandra
+  - driver/mysql
+  - driver/postgres
 - name: github.com/mattn/go-colorable
   version: 9056b7a9f2d1f2d96498d6d146acd1f9d5ed3d59
 - name: github.com/mattn/go-isatty
@@ -75,6 +99,8 @@ imports:
   version: a646d33e2ee3172a661fc09bca23bb4889a41bc8
   subpackages:
   - unix
+- name: gopkg.in/inf.v0
+  version: 3887ee99ecf07df5b447e9b00d9c0b2adaa9f3e4
 - name: gopkg.in/mgutz/dat.v1
   version: 12949dfa90b45a1a62e6227fc1607c4fa1a3274c
   subpackages:
@@ -89,7 +115,7 @@ testImports:
   subpackages:
   - spew
 - name: github.com/pmezard/go-difflib
-  version: 792786c7400a136282c1664665ae0a8db921c6c2
+  version: d8ed2627bdf02c080bf22230dbb337003b7aba2d
   subpackages:
   - difflib
 - name: github.com/stretchr/testify
