@@ -15,7 +15,7 @@ import (
 )
 
 var (
-	listenAddr = env.String("listen_addr", ":5000", "listen address")
+	port       = env.String("port", "5000", "listen port")
 	dbAddr     = env.String("database_url", "postgres://localhost/gogrademe-api-dev?sslmode=disable&timezone=Etc/UTC", "sql db address")
 	signingkey = env.String("jwt_key", "examplesigningkey", "key to used to sign jwt")
 	// signingmethod = env.String("jwt_method", "HS256", "method used to sign jwt")
@@ -150,7 +150,7 @@ func main() {
 	g = auth.Group("/grade")
 
 	// Start server
-	logrus.Println("Listening On:", listenAddr)
+	logrus.Println("Listening On:", port)
 
-	e.Run(standard.New(listenAddr))
+	e.Run(standard.New(":" + port))
 }
