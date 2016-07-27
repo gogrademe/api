@@ -15,7 +15,7 @@ import (
 
 var (
 	listenAddr = env.String("listen_addr", ":5000", "listen address")
-	dbAddr     = env.String("db_addr", "postgres://localhost/gogrademe-api-dev?sslmode=disable&timezone=Etc/UTC", "sql db address")
+	dbAddr     = env.String("database_url", "postgres://localhost/gogrademe-api-dev?sslmode=disable&timezone=Etc/UTC", "sql db address")
 	signingkey = env.String("jwt_key", "examplesigningkey", "key to used to sign jwt")
 	// signingmethod = env.String("jwt_method", "HS256", "method used to sign jwt")
 )
