@@ -1,0 +1,98 @@
+hash: b2201bb1c61eb324c0e59b2eb13251a38e27f27ebc8381d957aaa54d7d726358
+updated: 2016-07-26T21:43:03.573663239-05:00
+imports:
+- name: github.com/auth0/go-jwt-middleware
+  version: f3f7de3b9e394e3af3b88e1b9457f6f71d1ae0ac
+- name: github.com/cenkalti/backoff
+  version: cdf48bbc1eb78d1349cbda326a4a037f7ba565c6
+- name: github.com/dgrijalva/jwt-go
+  version: 01aeca54ebda6e0fbfafd0a524d234159c05ec20
+- name: github.com/garyburd/redigo
+  version: b8dc90050f24c1a73a52f107f3f575be67b21b7c
+  subpackages:
+  - redis
+  - internal
+- name: github.com/jackc/pgx
+  version: 558d5550cf5c08e7192eb2eb8635f21f4b700ff5
+  subpackages:
+  - stdlib
+- name: github.com/jmoiron/sqlx
+  version: bdae0c3219c3bdb92f3d7c70825018712787c933
+  subpackages:
+  - reflectx
+- name: github.com/labstack/echo
+  version: eed456ee8793452837f60d897127296f87af5ee9
+  subpackages:
+  - middleware
+  - engine/standard
+  - engine
+  - log
+- name: github.com/labstack/gommon
+  version: 445cf40e6de4cbef35daf3285ff5212c91e78262
+  subpackages:
+  - log
+  - bytes
+  - color
+  - random
+- name: github.com/lib/pq
+  version: 4dd446efc17690bc53e154025146f73203b18309
+  subpackages:
+  - oid
+- name: github.com/mattaitchison/env
+  version: 8aa9e03837ecf8f01aadb99f04cd7d8da33da5de
+- name: github.com/mattn/go-colorable
+  version: 9056b7a9f2d1f2d96498d6d146acd1f9d5ed3d59
+- name: github.com/mattn/go-isatty
+  version: 56b76bdf51f7708750eac80fa38b952bb9f32639
+- name: github.com/mgutz/ansi
+  version: c286dcecd19ff979eeb73ea444e479b903f2cfcb
+- name: github.com/mgutz/logxi
+  version: 7d364cab682d1b7b9063a3293c9e8c3087194940
+  subpackages:
+  - v1
+- name: github.com/mgutz/str
+  version: 968bf66e3da857419e4f6e71b2d5c9ae95682dc4
+- name: github.com/pmylund/go-cache
+  version: 1881a9bccb818787f68c52bfba648c6cf34c34fa
+- name: github.com/rs/cors
+  version: a62a804a8a009876ca59105f7899938a1349f4b3
+- name: github.com/serenize/snaker
+  version: 8824b61eca66d308fcb2d515287d3d7a28dba8d6
+- name: github.com/Sirupsen/logrus
+  version: a283a10442df8dc09befd873fab202bf8a253d6a
+- name: github.com/valyala/fasttemplate
+  version: 3b874956e03f1636d171bda64b130f9135f42cff
+- name: golang.org/x/crypto
+  version: bc89c496413265e715159bdc8478ee9a92fdc265
+  subpackages:
+  - bcrypt
+  - blowfish
+- name: golang.org/x/net
+  version: 6a513affb38dc9788b449d59ffed099b8de18fa0
+  subpackages:
+  - context
+- name: golang.org/x/sys
+  version: a646d33e2ee3172a661fc09bca23bb4889a41bc8
+  subpackages:
+  - unix
+- name: gopkg.in/mgutz/dat.v1
+  version: 12949dfa90b45a1a62e6227fc1607c4fa1a3274c
+  subpackages:
+  - sqlx-runner
+  - common
+  - reflectx
+  - kvs
+  - postgres
+testImports:
+- name: github.com/davecgh/go-spew
+  version: 5215b55f46b2b919f50a1df0eaa5886afe4e3b3d
+  subpackages:
+  - spew
+- name: github.com/pmezard/go-difflib
+  version: 792786c7400a136282c1664665ae0a8db921c6c2
+  subpackages:
+  - difflib
+- name: github.com/stretchr/testify
+  version: d77da356e56a7428ad25149ca77381849a6a5232
+  subpackages:
+  - assert
