@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/base64"
-	"net/http"
 
 	"github.com/Sirupsen/logrus"
 	h "github.com/gogrademe/api/handler"
@@ -25,63 +24,39 @@ func main() {
 	logrus.Println(signingkey)
 	// Echo instance
 	e := echo.New()
-
-	// Middleware
-	//
-	e.Use(mw.Logger())
-	// e.Use(mw.Recover())
+	e.Use(mw.LoggerWithConfig(mw.LoggerConfig{
+		Format: "method=${method}, uri=${uri}, status=${status}\n",
+	}))
+	e.Use(mw.Recover())
 	e.Use(mw.CORS())
-	// echo.WrapMiddleware(cors.New(cors.Options{
-	// 	AllowedHeaders: []string{"*"},
-	// 	AllowedMethods: []string{"GET", "POST", "DELETE", "PUT"},
-	// }).Handler())
-	// e.Use(cors.New(cors.Options{
-	// 	AllowedHeaders: []string{"*"},
-	// 	AllowedMethods: []string{"GET", "POST", "DELETE", "PUT"},
-	// }))
 
-	// Setup DB
 	s := store.Connect(dbAddr)
 	s.EnsureAdmin()
 	e.Use(h.SetDB(s))
 
 	// catch sql no rows errors and return as a 404
-	e.Use(func(h echo.HandlerFunc) echo.HandlerFunc {
-		return func(c echo.Context) error {
-			err := h(c)
-			if err == store.ErrNoRows {
-				return echo.NewHTTPError(http.StatusNotFound)
-			}
-			return err
-		}
-	})
+	// e.Use(func(h echo.HandlerFunc) echo.HandlerFunc {
+	// 	return func(c echo.Context) error {
+	// 		err := h(c)
+	// 		if err == store.ErrNoRows {
+	// 			return echo.NewHTTPError(http.StatusNotFound)
+	// 		}
+	// 		return err
+	// 	}
+	// })
 
 	// e.Post("/session", h.CreateSession(signingkey, signingmethod))
 	e.Post("/activate/:token", h.ActivateAccount)
 	e.Get("/setup", h.CanSetup)
 	e.Post("/setup", h.SetupApp)
 
-	auth := e.Group("")
-
-	// jwtMiddleware := jwtmiddleware.New(jwtmiddleware.Options{
-	// 	ValidationKeyGetter: func(token *jwt.Token) (interface{}, error) {
-	// 		decoded, err := base64.URLEncoding.DecodeString(signingkey)
-	// 		if err != nil {
-	// 			return nil, err
-	// 		}
-	// 		return decoded, nil
-	// 	},
-	// })
 	decoded, err := base64.URLEncoding.DecodeString(signingkey)
 	if err != nil {
 		panic(err)
 	}
+
+	auth := e.Group("")
 	auth.Use(mw.JWT(decoded))
-	// auth.Use(jwtMiddleware.Handler)
-
-	// auth.Use(echo.WrapMiddleware(jwtMiddleware.Handler))
-	// auth.Use(h.JWTAuth(signingkey, signingmethod))
-
 	auth.Get("/me", h.GetSession)
 	// Accounts
 	auth.Get("/account", h.GetAllAccounts)
