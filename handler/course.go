@@ -14,6 +14,10 @@ func CreateCourse(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
+	if len(p.Terms) == 0 {
+		return c.JSON(http.StatusBadRequest, nil)
+	}
+
 	db := ToDB(c)
 	if err := db.InsertCourse(p); err != nil {
 		return ErrServerError.Log(err)

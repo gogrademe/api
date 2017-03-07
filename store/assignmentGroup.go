@@ -9,9 +9,9 @@ func (s *Store) GetAssignmentGroup(id int) (*model.AssignmentGroup, error) {
 }
 
 // GetAssignmentGroupList --
-func (s *Store) GetAssignmentGroupList() ([]model.AssignmentGroup, error) {
+func (s *Store) GetAssignmentGroupList(courseID, termID int) ([]model.AssignmentGroup, error) {
 	var r []model.AssignmentGroup
-	return r, s.db.Select(&r, "select * from assignment_group")
+	return r, s.db.Select(&r, "select * from assignment_group where course_id=$1 and term_id=$2", courseID, termID)
 }
 
 // InsertAssignmentGroup --

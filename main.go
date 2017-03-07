@@ -2,6 +2,9 @@ package main
 
 import (
 	"encoding/base64"
+	"net/http"
+	"net/http/httputil"
+	"net/url"
 
 	"github.com/Sirupsen/logrus"
 	h "github.com/gogrademe/api/handler"
@@ -37,7 +40,6 @@ func main() {
 	}))
 	e.Use(mw.Recover())
 	e.Use(mw.CORS())
-
 	s := store.Connect(dbAddr)
 	s.EnsureAdmin()
 	e.Use(h.SetDB(s))
@@ -54,6 +56,7 @@ func main() {
 	// })
 
 	// e.Post("/session", h.CreateSession(signingkey, signingmethod))
+
 	e.Post("/activate/:token", h.ActivateAccount)
 	e.Get("/setup", h.CanSetup)
 	e.Post("/setup", h.SetupApp)
@@ -151,6 +154,12 @@ func main() {
 
 	// Start server
 	logrus.Println("Listening On:", port)
+	u, _ := url.Parse("http://localhost:3000")
+
+	e.Any("/app", standard.WrapHandler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		h := httputil.NewSingleHostReverseProxy(u)
+		h.ServeHTTP(w, r)
+	})))
 
 	e.Run(standard.New(":" + port))
 }

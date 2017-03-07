@@ -24,8 +24,9 @@ func CreateAssignmentGroup(c echo.Context) error {
 
 func GetAllAssignmentGroups(c echo.Context) error {
 	db := ToDB(c)
-
-	ppl, err := db.GetAssignmentGroupList()
+	courseID, _ := strconv.Atoi(c.QueryParam("course_id"))
+	termID, _ := strconv.Atoi(c.QueryParam("term_id"))
+	ppl, err := db.GetAssignmentGroupList(courseID, termID)
 	if err != nil {
 		return ErrServerError.Log(err)
 	}

@@ -1,0 +1,7 @@
+vendor
+dist
+build
+
+.DS_Store
+
+.env

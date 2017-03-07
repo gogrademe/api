@@ -16,6 +16,8 @@ import (
 	"github.com/serenize/snaker"
 )
 
+type Filter map[string]interface{}
+
 type Store struct {
 	db *sqlx.DB
 	ru *runner.DB

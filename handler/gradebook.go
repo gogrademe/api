@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"net/http"
 	"strconv"
 
 	"github.com/labstack/echo"
@@ -15,6 +16,6 @@ func GetGradebook(c echo.Context) error {
 		return ErrServerError.Log(err)
 	}
 
-	return c.JSON(200, res)
+	return c.JSON(http.StatusOK, res)
 
 }
