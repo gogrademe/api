@@ -19,7 +19,7 @@ func CanSetup(c echo.Context) error {
 	db := ToDB(c)
 	accts, err := db.GetAccountList()
 	if len(accts) > 0 || err != nil {
-		return ErrForbidden.Log(err, fmt.Sprintf("total accounts: %s", len(accts)))
+		return ErrForbidden.Log(err, fmt.Sprintf("total accounts: %d", len(accts)))
 	}
 
 	return c.NoContent(200)
@@ -30,7 +30,7 @@ func SetupApp(c echo.Context) error {
 	db := ToDB(c)
 	accts, err := db.GetAccountList()
 	if len(accts) > 0 || err != nil {
-		return ErrForbidden.Log(err, fmt.Sprintf("total accounts: %s", len(accts)))
+		return ErrForbidden.Log(err, fmt.Sprintf("total accounts: %d", len(accts)))
 	}
 
 	p := &Setup{}

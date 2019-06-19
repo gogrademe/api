@@ -1,0 +1,44 @@
+# .gqlgen.yml example
+#
+# Refer to https://gqlgen.com/config/
+# for detailed .gqlgen.yml documentation.
+
+schema:
+- schema.graphql
+exec:
+  filename: graph/generated/generated.go
+  package: generated
+model:
+  filename: model/generated.go
+  package: model
+resolver:
+  filename: graph/resolver.go
+  type: Resolver
+
+# Tell gqlgen about any existing models you want to reuse for
+# graphql. These normally come from the db or a remote api.
+models:
+  Assignment:
+    model: github.com/gogrademe/api/model.Assignment
+    fields:
+      # id:
+      #   fieldName: assignmentID # bind to a different go field name
+      course:
+        resolver: true # force a resolver to be generated
+      term:
+        resolver: true
+  Course:
+    model: github.com/gogrademe/api/model.Course
+  Person:
+    model: github.com/gogrademe/api/model.Person
+  Term:
+    model: github.com/gogrademe/api/model.Term
+  AssignmentGroup:
+    model: github.com/gogrademe/api/model.AssignmentGroup
+  # model also accepts multiple backing go types. When mapping onto structs
+  # any of these types can be used, the first one is used as the default for
+  # resolver args.
+  ID:
+    model:
+      - github.com/99designs/gqlgen/graphql.IntID
+      - github.com/99designs/gqlgen/graphql.ID

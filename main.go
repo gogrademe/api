@@ -7,10 +7,13 @@ import (
 	"net/url"
 
 	"github.com/Sirupsen/logrus"
+	graph "github.com/gogrademe/api/graph"
+	api_graphql "github.com/gogrademe/api/graph/generated"
 	h "github.com/gogrademe/api/handler"
 	"github.com/gogrademe/api/store"
 	"github.com/mattes/migrate/migrate"
 
+	"github.com/99designs/gqlgen/handler"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/engine/standard"
 	mw "github.com/labstack/echo/middleware"
@@ -43,6 +46,9 @@ func main() {
 	s := store.Connect(dbAddr)
 	s.EnsureAdmin()
 	e.Use(h.SetDB(s))
+
+	e.Any("/", standard.WrapHandler(handler.Playground("GraphQL playground", "/query")))
+	e.Any("/query", standard.WrapHandler(handler.GraphQL(api_graphql.NewExecutableSchema(graph.NewRootResolvers(s)))))
 
 	// catch sql no rows errors and return as a 404
 	// e.Use(func(h echo.HandlerFunc) echo.HandlerFunc {

@@ -1,0 +1,109 @@
+# type Account {
+#   id: ID!
+#   email: String!
+# }
+
+type Assignment {
+  assignmentId: ID!
+  name: String!
+  course: Course!
+  term: Term!
+  group: AssignmentGroup!
+  maxScore: Int!
+  #   dueDate:
+}
+
+# type Attempt {
+#   id: ID!
+#   assignment: Assignment!
+#   person: Person!
+#   # PersonID     int      `json:"person_id"`
+#   score: String!
+#   scoreNumber: Float! # numeric score
+# }
+
+type Course {
+  courseId: ID!
+  name: String!
+  # LevelID     int    `json:"level_id"`
+  gradeLevel: String!
+  # MaxStudents int    `json:"max_students"`
+  # Terms       []Term `json:"terms"`
+}
+
+type Person {
+  personId: ID!
+  firstName: String
+  middleName: String
+  lastName: String
+  # DisplayName String
+  # IsAdmin     bool           `json:"is_admin"`
+  # IsStudent   bool           `json:"is_student"`
+  # IsTeacher   bool           `json:"is_teacher"`
+  # IsParent    bool           `json:"is_parent"`
+  # GradeLevel  string         `json:"grade_level"`
+  # ContactInfo *[]ContactInfo `json:"contact_info"`
+}
+
+type Term {
+  termId: ID!
+  name: String!
+  schoolYear: Int!
+}
+
+type AssignmentGroup {
+  groupId: ID!
+  name: String!
+  # courseId: ID!
+  # termId: ID!
+}
+
+input NewAssignment {
+  name: String!
+  courseId: ID!
+  termId: ID!
+  groupId: ID!
+}
+
+input NewCourse {
+  name: String!
+  levelId: ID!
+  # termId: ID!
+}
+
+input NewTerm {
+  name: String!
+  schoolYear: Int!
+}
+
+input NewAssignmentGroup {
+  name: String!
+  courseId: ID!
+  termId: ID!
+}
+
+type Mutation {
+  createAssignment(input: NewAssignment!): Assignment! #@hasRole(role: ADMIN)
+  createCourse(input: NewCourse!): Course! #@hasRole(role: ADMIN)
+  createTerm(input: NewTerm!): Term! #@hasRole(role: ADMIN)
+  createAssignmentGroup(input: NewAssignmentGroup!): AssignmentGroup!
+  #@hasRole(role: ADMIN)
+}
+
+type Query {
+  assignments: [Assignment!]!
+  courses: [Course!]!
+  terms: [Term!]!
+  people: [Person!]!
+}
+
+scalar Timestamp
+
+# directive @isAuthenticated on FIELD_DEFINITION
+
+# directive @hasRole(role: Role!) on FIELD_DEFINITION
+
+# enum Role {
+#   ADMIN
+#   USER
+# }

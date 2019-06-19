@@ -1,0 +1,39 @@
+module github.com/gogrademe/api
+
+go 1.12
+
+require (
+	github.com/99designs/gqlgen v0.9.0
+	github.com/Sirupsen/logrus v0.0.0-20160716025631-a283a10442df
+	github.com/auth0/go-jwt-middleware v0.0.0-20160421215738-f3f7de3b9e39
+	github.com/cenkalti/backoff v0.0.0-20160610100912-cdf48bbc1eb7
+	github.com/dgrijalva/jwt-go v0.0.0-20160705203006-01aeca54ebda
+	github.com/garyburd/redigo v0.0.0-20160525165706-b8dc90050f24
+	github.com/go-sql-driver/mysql v0.0.0-20160602001021-3654d25ec346
+	github.com/gocql/gocql v0.0.0-20160720080653-94f1315e46b0
+	github.com/golang/snappy v0.0.0-20160529050041-d9eb7a3d35ec
+	github.com/hailocab/go-hostpool v0.0.0-20160125115350-e80d13ce29ed
+	github.com/jackc/pgx v0.0.0-20160715195140-558d5550cf5c
+	github.com/jmoiron/sqlx v0.0.0-20160615151803-bdae0c3219c3
+	github.com/labstack/echo v0.0.0-20160726170614-eed456ee8793
+	github.com/labstack/gommon v0.0.0-20160719155139-445cf40e6de4
+	github.com/lib/pq v0.0.0-20160623220637-4dd446efc176
+	github.com/mattaitchison/env v0.0.0-20150825200821-8aa9e03837ec
+	github.com/mattes/migrate v1.2.0
+	github.com/mattn/go-colorable v0.0.5
+	github.com/mattn/go-isatty v0.0.0-20151211000621-56b76bdf51f7
+	github.com/mgutz/ansi v0.0.0-20150914162238-c286dcecd19f
+	github.com/mgutz/logxi v0.0.0-20160416165908-7d364cab682d
+	github.com/mgutz/str v1.2.0
+	github.com/pmylund/go-cache v2.0.0+incompatible
+	github.com/rs/cors v1.6.0
+	github.com/serenize/snaker v0.0.0-20160310080004-8824b61eca66
+	github.com/stretchr/testify v1.3.0
+	github.com/valyala/fasttemplate v0.0.0-20160315193134-3b874956e03f
+	github.com/vektah/gqlparser v1.1.2
+	golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2
+	golang.org/x/net v0.0.0-20190311183353-d8887717615a
+	golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a
+	gopkg.in/inf.v0 v0.9.0
+	gopkg.in/mgutz/dat.v1 v1.1.9
+)
